@@ -2,13 +2,13 @@ import Fastify, { FastifyInstance } from "fastify";
 
 const fastify: FastifyInstance = Fastify({ logger: true });
 
-const PORT: number = 30001;
+const PORT = 30001;
 
 fastify.get("/hello", async (): Promise<string> => {
-  return "Hello, World!";
+  return "Hello, World!!";
 });
 
-const start = async (): Promise<void> => {
+async function start(): Promise<void> {
   try {
     await fastify.listen({ port: PORT });
     fastify.log.info(`Server listening on ${PORT}`);
