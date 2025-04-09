@@ -1,11 +1,14 @@
 import Fastify, { FastifyInstance } from "fastify";
+import { getUsers } from "./repository/postgresRepository";
+import { User } from "./repository/user.types";
 
 const fastify: FastifyInstance = Fastify({ logger: true });
 
 const PORT = 30001;
 
-fastify.get("/hello", async (): Promise<string> => {
-  return "Hello, World!!";
+fastify.get("/hello", async (): Promise<User[]> => {
+  const users = await getUsers()
+  return users;
 });
 
 async function start(): Promise<void> {
