@@ -1,8 +1,5 @@
-
-import { PrismaClient } from "@prisma/client";
+import prisma from "../client/client";
 import { UserEntity } from "../entities/user-entity.types";
-
-const prisma = new PrismaClient()
 
 export async function getUsers(): Promise<UserEntity[]> {
   try {
@@ -17,8 +14,6 @@ export async function getUsers(): Promise<UserEntity[]> {
 
     console.error("Error getting user:", error);
     throw error;
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -36,7 +31,5 @@ export async function createUser(): Promise<void> {
 
     console.error("Error creating user:", error);
     throw error;
-  } finally {
-    await prisma.$disconnect()
   }
 }
