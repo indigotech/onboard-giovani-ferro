@@ -10,6 +10,7 @@
   "author": "Giovani Ferro",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "6.6.0",
     "fastify": "5.2.2"
   },
   "type": "module",
@@ -20,6 +21,7 @@
     "eslint-config-prettier": "10.1.1",
     "eslint-plugin-prettier": "5.2.6",
     "prettier": "3.5.3",
+    "prisma": "6.6.0",
     "tsx": "4.19.3",
     "typescript": "5.8.3",
     "typescript-eslint": "8.29.1"
