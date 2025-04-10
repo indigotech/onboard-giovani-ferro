@@ -1,17 +1,16 @@
 
 import { PrismaClient } from "@prisma/client";
-import { User } from "./user.types";
+import { UserEntity } from "../entities/user-entity.types";
 
 const prisma = new PrismaClient()
 
-export async function getUsers(): Promise<User[]> {
+export async function getUsers(): Promise<UserEntity[]> {
   try {
-    const users: User[] = await prisma.user.findMany()
+    const users: UserEntity[] = await prisma.user.findMany()
 
     if (!users || users.length === 0) {
       return [];
     }
-
 
     return users;
   } catch (error) {
