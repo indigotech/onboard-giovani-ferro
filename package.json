@@ -5,7 +5,9 @@
   "main": "index.ts",
   "scripts": {
     "start": "tsx src/index.ts",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev"
   },
   "author": "Giovani Ferro",
   "license": "ISC",

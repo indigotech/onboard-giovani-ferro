@@ -45,7 +45,7 @@ The goal of this project is to develop a server capable of:
 - Start a PostgreSQL container using Docker-compose:
 
   ```bash
-  docker-compose up
+  docker-compose up -d
   ```
 
 3. **Generate Prisma Client**:
@@ -53,7 +53,7 @@ The goal of this project is to develop a server capable of:
 - Run the following command to generate the Prisma client:
 
   ```bash
-  npx prisma generate
+  npm run db:generate
   ```
 
 - This will create the Prisma client in the `client`
@@ -64,7 +64,7 @@ The goal of this project is to develop a server capable of:
 - Apply the database schema to your PostgreSQL database using Prisma migrations:
 
   ```bash
-  npx prisma migrate dev --name init
+  npm run db:migrate
   ```
 
 - This command will:
