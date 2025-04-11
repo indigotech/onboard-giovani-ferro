@@ -1,8 +1,10 @@
 import Fastify, { FastifyInstance } from "fastify";
 
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { UserRequest } from "./models/user-request.types";
 import { UserResponse } from "./models/user-response.types";
 import { createUser, getUsers } from "./repository/db-repository";
+import { isStrongPassword } from "./shared/user-validation";
 
 
 const fastify: FastifyInstance = Fastify({ logger: true });
@@ -27,9 +29,28 @@ fastify.get("/users", async (_, reply) => {
   }
 });
 
-fastify.post<{ Body: UserRequest }>("/users", async (request, reply) => {
+fastify.post<{ Body: UserRequest }>("/users", {
+  schema: {
+    body: {
+      type: 'object',
+      properties: {
+        username: { type: 'string' },
+        email: { type: 'string', format: 'email' },
+        password: { type: 'string' },
+        birthDate: { type: 'string', format: 'date' }
+      }
+    }
+  }
+}, async (request, reply) => {
   try {
     const { body } = request;
+
+    if (!isStrongPassword(body.password)) {
+      return reply.status(400).send({
+        error: 'Password must be at least 6 characters long and contain at least 1 letter and 1 digit',
+      });
+    }
+
     const user = await createUser(body);
 
     if (!user) {
@@ -45,7 +66,13 @@ fastify.post<{ Body: UserRequest }>("/users", async (request, reply) => {
 
     reply.status(201).send(userResponse);
   } catch (error: unknown) {
-    reply.status(500).send({ error: "Failed to create user" });
+    const { code, meta } = error as PrismaClientKnownRequestError
+
+    if (code === 'P2002') {
+      reply.status(500).send({ error: `Failed to create user: Unique constraint failed` });
+    }
+
+    reply.status(500).send({ error: `Failed to create user` });
   }
 });
 
