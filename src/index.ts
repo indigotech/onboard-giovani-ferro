@@ -4,7 +4,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { UserRequest } from "./models/user-request.types";
 import { UserResponse } from "./models/user-response.types";
 import { createUser, getUsers } from "./repository/db-repository";
-import { isStrongPassword } from "./shared/user-validation";
+import { isStrongPassword } from "./shared/helper/user-validation";
 
 
 const fastify: FastifyInstance = Fastify({ logger: true });
@@ -56,6 +56,7 @@ fastify.post<{ Body: UserRequest }>("/users", {
     if (!user) {
       return reply.status(400).send({ error: "User not created" });
     }
+
 
     const userResponse: UserResponse = {
       id: user.id,
