@@ -7,7 +7,8 @@
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev"
+    "db:migrate": "prisma migrate dev",
+    "test": "mocha"
   },
   "author": "Giovani Ferro",
   "license": "ISC",
@@ -20,10 +21,12 @@
   "devDependencies": {
     "@eslint/js": "9.24.0",
     "@types/bcrypt": "5.0.2",
+    "@types/mocha": "^10.0.10",
     "@types/node": "22.14.0",
     "eslint": "9.24.0",
     "eslint-config-prettier": "10.1.1",
     "eslint-plugin-prettier": "5.2.6",
+    "mocha": "^11.1.0",
     "prettier": "3.5.3",
     "prisma": "6.6.0",
     "tsx": "4.19.3",
