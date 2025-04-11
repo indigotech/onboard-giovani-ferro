@@ -1,6 +1,7 @@
 import Fastify, { FastifyInstance } from "fastify";
-import { createUser, getUsers } from "./repository/postgresRepository";
-import { UserRequest, UserResponse } from "./repository/user.types";
+import { UserResponse, UserRequest } from "./entities/user-entity.types";
+import { createUser, getUsers } from "./repository/db-repository";
+
 
 const fastify: FastifyInstance = Fastify({ logger: true });
 
