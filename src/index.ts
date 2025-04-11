@@ -1,11 +1,9 @@
-import Fastify, { FastifyInstance } from "fastify";
-
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import Fastify, { FastifyInstance } from "fastify";
+import { createUserHandler } from "./domain/command/create-user";
+import { findUsers } from "./domain/query/find-users";
 import { UserRequest } from "./models/user-request.types";
-import { UserResponse } from "./models/user-response.types";
-import { createUser, getUsers } from "./repository/db-repository";
 import { isStrongPassword } from "./shared/helper/user-validation";
-
 
 const fastify: FastifyInstance = Fastify({ logger: true });
 
@@ -13,14 +11,7 @@ const PORT = 30001;
 
 fastify.get("/users", async (_, reply) => {
   try {
-    const users = await getUsers()
-
-    const userResponse: UserResponse[] = users.map(user => ({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      birthDate: user.birthDate,
-    }))
+    const userResponse = await findUsers();
 
     reply.status(200).send(userResponse);
 
@@ -51,23 +42,11 @@ fastify.post<{ Body: UserRequest }>("/users", {
       });
     }
 
-    const user = await createUser(body);
-
-    if (!user) {
-      return reply.status(400).send({ error: "User not created" });
-    }
-
-
-    const userResponse: UserResponse = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      birthDate: user.birthDate,
-    };
+    const userResponse = await createUserHandler(request.body as UserRequest)
 
     reply.status(201).send(userResponse);
   } catch (error: unknown) {
-    const { code, meta } = error as PrismaClientKnownRequestError
+    const { code } = error as PrismaClientKnownRequestError
 
     if (code === 'P2002') {
       reply.status(409).send({ error: `Failed to create user: Unique constraint failed` });
