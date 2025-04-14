@@ -1,12 +1,12 @@
 import bcrypt from "bcrypt";
-import { UserRequest } from "../../models/request/user/user-request.types";
-import { UserResponse } from "../../models/response/user/user-response.types";
-import { createUser } from "../../repository/db-repository";
+import { UserRequest } from "../models/request/user/user-request.types";
+import { UserResponse } from "../models/response/user/user-response.types";
+import { createUser } from "../repository/db-repository";
 
 const SALT_ROUNDS = 10;
 
 export async function createUserHandler(userCommand: UserRequest): Promise<UserResponse> {
-  const userRequest: UserRequest = await EncryptPassword(userCommand as UserRequest)
+  const userRequest: UserRequest = await encryptPassword(userCommand as UserRequest)
 
   const user = await createUser(userRequest);
 
@@ -20,7 +20,7 @@ export async function createUserHandler(userCommand: UserRequest): Promise<UserR
   return userResponse
 }
 
-async function EncryptPassword(user: UserRequest): Promise<UserRequest> {
+async function encryptPassword(user: UserRequest): Promise<UserRequest> {
   const hashedPassword = await bcrypt.hash(user.password, SALT_ROUNDS);
 
   return {

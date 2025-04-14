@@ -1,9 +1,10 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import Fastify, { FastifyInstance } from "fastify";
-import { createUserHandler } from "./domain/command/create-user";
-import { findUsers } from "./domain/query/find-users";
+import { createUserHandler } from "./domain/create-user";
+import { findUsers } from "./domain/find-users";
 import { UserRequest } from "./models/user-request.types";
-import { isStrongPassword } from "./shared/helper/user-validation";
+import { isStrongPassword } from "./shared/user-validation";
+
 
 const fastify: FastifyInstance = Fastify({ logger: true });
 
@@ -42,7 +43,7 @@ fastify.post<{ Body: UserRequest }>("/users", {
       });
     }
 
-    const userResponse = await createUserHandler(request.body as UserRequest)
+    const userResponse = await createUserHandler(body)
 
     reply.status(201).send(userResponse);
   } catch (error: unknown) {
