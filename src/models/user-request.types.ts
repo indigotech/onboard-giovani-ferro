@@ -4,4 +4,3 @@ export interface UserRequest {
     password: string;
     birthDate: string;
 }
-  

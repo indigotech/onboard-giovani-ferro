@@ -4,4 +4,3 @@ export interface UserResponse {
     email: string;
     birthDate: Date;
 }
-  

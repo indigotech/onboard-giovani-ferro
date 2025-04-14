@@ -1,8 +1,8 @@
 import Fastify, { FastifyInstance } from "fastify";
 
+import { UserRequest } from "./models/user-request.types";
+import { UserResponse } from "./models/user-response.types";
 import { createUser, getUsers } from "./repository/db-repository";
-import { UserRequest } from "./models/request/user/user-request.types";
-import { UserResponse } from "./models/response/user/user-response.types";
 
 
 const fastify: FastifyInstance = Fastify({ logger: true });

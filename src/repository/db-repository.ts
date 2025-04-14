@@ -1,6 +1,6 @@
 import prisma from "../client/client";
 import { UserEntity } from "../entities/user-entity.types";
-import { UserRequest } from "../models/request/user/user-request.types";
+import { UserRequest } from "../models/user-request.types";
 
 
 export async function getUsers(): Promise<UserEntity[]> {
