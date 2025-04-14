@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import { UserRequest } from "../models/request/user/user-request.types";
-import { UserResponse } from "../models/response/user/user-response.types";
+import { UserRequest } from "../models/user-request.types";
+import { UserResponse } from "../models/user-response.types";
 import { createUser } from "../repository/db-repository";
 
 const SALT_ROUNDS = 10;

@@ -1,4 +1,4 @@
-import { UserResponse } from "../models/response/user/user-response.types";
+import { UserResponse } from "../models/user-response.types";
 import { getUsers } from "../repository/db-repository";
 
 export async function findUsers(): Promise<UserResponse[]> {
