@@ -27,9 +27,10 @@ fastify.get("/users", async (_, reply) => {
   }
 });
 
-fastify.post("/users", async (request, reply) => {
+fastify.post<{ Body: UserRequest }>("/users", async (request, reply) => {
   try {
-    const user = await createUser(request.body as UserRequest);
+    const { body } = request;
+    const user = await createUser(body);
 
     if (!user) {
       return reply.status(400).send({ error: "User not created" });
