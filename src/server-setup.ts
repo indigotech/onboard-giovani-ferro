@@ -57,7 +57,6 @@ fastify.post<{ Body: UserRequest }>("/users", {
 export async function serverSetup(): Promise<FastifyInstance> {
   try {
     const port = process.env.PORT ? +process.env.PORT : 30001;
-    console.log(process.env.PORT)
     await fastify.listen({ port });
     fastify.log.info(`Server listening on ${port}`);
 
