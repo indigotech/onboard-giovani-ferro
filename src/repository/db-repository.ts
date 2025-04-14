@@ -1,4 +1,4 @@
-import prisma from "../client/client";
+import { prisma } from "../client/client";
 import { UserEntity } from "../entities/user-entity.types";
 import { UserRequest } from "../models/user-request.types";
 

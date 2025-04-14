@@ -1,5 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient()
+export let prisma: PrismaClient;
 
-export default prisma;
+export function dbSetup() {
+  const url = process.env.DATABASE_URL;
+
+  console.log(url)
+  prisma = new PrismaClient({ datasourceUrl: url })
+}

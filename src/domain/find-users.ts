@@ -1,7 +1,7 @@
 import { UserResponse } from "../models/user-response.types";
 import { getUsers } from "../repository/db-repository";
 
-export async function findUsers(): Promise<UserResponse[]> {
+export async function findUsersHandler(): Promise<UserResponse[]> {
   const users = await getUsers()
 
   const userResponse: UserResponse[] = users.map(user => ({
