@@ -2,7 +2,6 @@ import prisma from "../client/client";
 import { UserEntity } from "../entities/user-entity.types";
 import { UserRequest } from "../models/user-request.types";
 
-
 export async function getUsers(): Promise<UserEntity[]> {
   try {
     const users: UserEntity[] = await prisma.user.findMany()
