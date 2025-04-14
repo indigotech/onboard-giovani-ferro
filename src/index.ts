@@ -69,7 +69,7 @@ fastify.post<{ Body: UserRequest }>("/users", {
     const { code, meta } = error as PrismaClientKnownRequestError
 
     if (code === 'P2002') {
-      reply.status(500).send({ error: `Failed to create user: Unique constraint failed` });
+      reply.status(409).send({ error: `Failed to create user: Unique constraint failed` });
     }
 
     reply.status(500).send({ error: `Failed to create user` });
