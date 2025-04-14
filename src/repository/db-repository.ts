@@ -1,5 +1,7 @@
 import prisma from "../client/client";
 import { UserEntity } from "../entities/user-entity.types";
+import { UserRequest } from "../models/user-request.types";
+
 
 export async function getUsers(): Promise<UserEntity[]> {
   try {
@@ -9,7 +11,7 @@ export async function getUsers(): Promise<UserEntity[]> {
       return [];
     }
 
-    return users;
+    return users
   } catch (error) {
 
     console.error("Error getting user:", error);
@@ -17,18 +19,23 @@ export async function getUsers(): Promise<UserEntity[]> {
   }
 }
 
-export async function createUser(): Promise<void> {
+export async function createUser(userRequest: UserRequest): Promise<UserEntity> {
   try {
-    await prisma.user.create({
+    const user: UserEntity = await prisma.user.create({
       data: {
-        name: "New User",
-        email: "newuser@example.com",
-        password: "securepassword",
-        birthDate: new Date("2000-01-01"),
+        name: userRequest.name,
+        email: userRequest.email,
+        password: userRequest.password,
+        birthDate: new Date(userRequest.birthDate),
       }
     })
-  } catch (error) {
 
+    if (!user) {
+      throw new Error("User not created");
+    }
+
+    return user;
+  } catch (error) {
     console.error("Error creating user:", error);
     throw error;
   }

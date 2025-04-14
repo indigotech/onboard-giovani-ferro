@@ -1,14 +1,52 @@
 import Fastify, { FastifyInstance } from "fastify";
-import { UserEntity } from "./entities/user-entity.types";
-import { getUsers } from "./repository/db-repository";
+
+import { UserRequest } from "./models/user-request.types";
+import { UserResponse } from "./models/user-response.types";
+import { createUser, getUsers } from "./repository/db-repository";
+
 
 const fastify: FastifyInstance = Fastify({ logger: true });
 
 const PORT = 30001;
 
-fastify.get("/hello", async (): Promise<UserEntity[]> => {
-  const users = await getUsers()
-  return users;
+fastify.get("/users", async (_, reply) => {
+  try {
+    const users = await getUsers()
+
+    const userResponse: UserResponse[] = users.map(user => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      birthDate: user.birthDate,
+    }))
+
+    reply.status(200).send(userResponse);
+
+  } catch (error: unknown) {
+    reply.send({ error: "Failed to fetch users" });
+  }
+});
+
+fastify.post<{ Body: UserRequest }>("/users", async (request, reply) => {
+  try {
+    const { body } = request;
+    const user = await createUser(body);
+
+    if (!user) {
+      return reply.status(400).send({ error: "User not created" });
+    }
+
+    const userResponse: UserResponse = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      birthDate: user.birthDate,
+    };
+
+    reply.status(201).send(userResponse);
+  } catch (error: unknown) {
+    reply.status(500).send({ error: "Failed to create user" });
+  }
 });
 
 async function start(): Promise<void> {
