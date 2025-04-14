@@ -2,5 +2,9 @@
   "spec": "test/index.ts",
   "timeout": 5000,
   "recursive": true,
-  "node-option": ["import=tsx"]
+  "node-option": ["import=tsx"],
+  "require": ["tsx"],
+  "extension": ["ts"],
+  "watch-files": ["src/**/*.ts", "test/**/*.ts"],
+  "watch-ignore": ["node_modules"]
 }
