@@ -53,19 +53,13 @@ describe('POST Users - Weak Password', async () => {
       password: "password",
       birthDate: "2000-01-01",
     }
+    const response = await axios.post(`http://localhost:${port}/users`, mockUser, { validateStatus: () => true });
 
-    try {
-      await axios.post(`http://localhost:${port}/users`, mockUser);
-      await axios.post(`http://localhost:${port}/users`, mockUser);
-    } catch (error: any) {
-
-      expect(error.response.status).to.equal(400);
-
-      expect(error.response.data).to.have.property("error");
-      expect(error.response.data.error).to.equal(
-        "Password must be at least 6 characters long and contain at least 1 letter and 1 digit"
-      );
-    }
+    expect(response.status).to.equal(400);
+    expect(response.data).to.have.property("error");
+    expect(response.data.error).to.equal(
+      "Password must be at least 6 characters long and contain at least 1 letter and 1 digit"
+    );
   });
 });
 
@@ -78,15 +72,14 @@ describe('POST Users - Duplicated Email', async () => {
       birthDate: "2000-01-01",
     }
 
-    try {
-      await axios.post(`http://localhost:${port}/users`, mockUser);
-    } catch (error: any) {
-      expect(error.response.status).to.equal(409);
+    prisma.user.create({ data: mockUser })
 
-      expect(error.response.data).to.have.property("error");
-      expect(error.response.data.error).to.equal(
-        "Failed to create user: Unique constraint failed"
-      );
-    }
+    const response = await axios.post(`http://localhost:${port}/users`, mockUser, { validateStatus: () => true });
+    expect(response.status).to.equal(409);
+    expect(response.data).to.have.property("error");
+    expect(response.data.error).to.equal(
+      "Failed to create user: Unique constraint failed"
+    );
+
   });
 });
