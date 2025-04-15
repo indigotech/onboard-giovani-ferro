@@ -4,10 +4,9 @@ import { dbSetup, prisma } from "../src/client/client";
 import { serverSetup } from "../src/server-setup";
 
 let fastify: FastifyInstance;
-let port: number;
 
 before(async () => {
-  config({ path: "/home/taqtile/Desktop/onboard-giovani-ferro/test.env" })
+  config()
   dbSetup();
   fastify = await serverSetup()
 })
@@ -15,8 +14,11 @@ before(async () => {
 import "./users-get-test";
 import "./users-post-test";
 
-after(async () => {
+afterEach(async () => {
   await prisma.user.deleteMany();
+})
+
+after(async () => {
   await fastify.close();
   await prisma.$disconnect()
   console.info("Server closed")

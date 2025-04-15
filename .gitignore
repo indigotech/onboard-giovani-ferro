@@ -17,7 +17,7 @@ jspm_packages/
 
 # Environment variables
 .env
-.env.test
+test.env
 
 # Build output
 dist/
