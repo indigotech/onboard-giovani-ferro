@@ -40,7 +40,7 @@ describe("POST Authenticate - Authentication Sucessful", () => {
 
     const decodedToken = jwt.verify(token, JWT_SECRET);
 
-    expect(decodedToken).to.have.property("email", user.email);
+    expect(decodedToken).to.have.property("id", user.id);
   });
 })
 

@@ -19,7 +19,7 @@ export async function authenticationHandler(authCommand: AuthRequest): Promise<A
   }
 
   const token = jwt.sign(
-    { email: user.email },
+    { id: user.id },
     JWT_SECRET,
     { expiresIn: JWT_EXPIRATION }
   );
