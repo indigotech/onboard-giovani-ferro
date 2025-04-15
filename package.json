@@ -8,22 +8,27 @@
     "dev": "tsx watch src/index.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "test": "mocha"
+    "db:migrate_test": "dotenv -e test.env prisma migrate dev",
+    "test": "dotenv -e test.env mocha"
   },
   "author": "Giovani Ferro",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "6.6.0",
     "bcrypt": "5.1.1",
-    "fastify": "5.2.2",
-    "dotenv": "16.5.0"
+    "dotenv": "16.5.0",
+    "fastify": "5.2.2"
   },
   "type": "module",
   "devDependencies": {
     "@eslint/js": "9.24.0",
     "@types/bcrypt": "5.0.2",
-    "@types/mocha": "^10.0.10",
+    "@types/chai": "5.2.1",
+    "@types/mocha": "10.0.10",
     "@types/node": "22.14.0",
+    "axios": "1.8.4",
+    "chai": "5.2.0",
+    "dotenv-cli": "8.0.0",
     "eslint": "9.24.0",
     "eslint-config-prettier": "10.1.1",
     "eslint-plugin-prettier": "5.2.6",

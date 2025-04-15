@@ -2,5 +2,10 @@
   "spec": "test/index.ts",
   "timeout": 5000,
   "recursive": true,
-  "node-option": ["import=tsx"]
+  "node-option": ["import=tsx"],
+  "require": ["tsx", "dotenv/config"],
+  "env" : "dotenv_config_path=./test.env",
+  "extension": ["ts"],
+  "watch-files": ["src/**/*.ts", "test/**/*.ts"],
+  "watch-ignore": ["node_modules"]
 }
