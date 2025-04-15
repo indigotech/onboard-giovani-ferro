@@ -1,8 +1,10 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import Fastify, { FastifyInstance } from "fastify";
+import { authenticationHandler } from "./domain/authenticate";
 import { createUserHandler } from "./domain/create-user";
 import { findUsersHandler } from "./domain/find-users";
-import { createError } from "./error-handler";
+import { createError, errorHandlerSetup } from "./error-handler";
+import { AuthRequest } from "./models/auth-request.types";
 import { UserRequest } from "./models/user-request.types";
 import { isStrongPassword } from "./shared/user-validation";
 
@@ -27,7 +29,7 @@ fastify.post<{ Body: UserRequest }>("/users", {
     body: {
       type: 'object',
       properties: {
-        username: { type: 'string' },
+        name: { type: 'string' },
         email: { type: 'string', format: 'email' },
         password: { type: 'string' },
         birthDate: { type: 'string', format: 'date' }
@@ -63,6 +65,34 @@ fastify.post<{ Body: UserRequest }>("/users", {
     createError({ reply, statusCode: 500, message, code: codeMessage })
   }
 });
+
+fastify.post<{ Body: AuthRequest }>("/auth", {
+  schema: {
+    body: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', format: 'email' },
+        password: { type: 'string' },
+      }
+    }
+  }
+}, async (request, reply) => {
+  try {
+    const { body } = request;
+
+    const userResponse = await authenticationHandler(body);
+
+    reply.status(201).send(userResponse);
+  } catch (error: unknown) {
+    const message = "Credenciais Inválidas";
+    const codeMessage = "INVALID_AUTHENTICATION";
+    const details = "Email e/ou Senha do usuário está incorreto";
+
+    createError({ reply, statusCode: 401, message, code: codeMessage, details })
+  }
+});
+
+fastify.setErrorHandler((error, request, reply) => errorHandlerSetup(error, reply));
 
 export async function serverSetup(): Promise<FastifyInstance> {
   try {
