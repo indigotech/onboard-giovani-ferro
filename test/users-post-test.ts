@@ -1,5 +1,6 @@
 import axios from "axios";
 import { expect } from "chai";
+import { prisma } from "../src/client/client";
 import { UserRequest } from "../src/models/user-request.types";
 import { UserResponse } from "../src/models/user-response.types";
 
@@ -26,6 +27,21 @@ describe('POST Users - Create User', async () => {
     };
 
     expect(response.data).to.be.deep.eq(expectedResponse);
+
+    const userInDb = await prisma.user.findUnique({
+      where: { id: response.data.id },
+    });
+
+    expect(userInDb).to.not.be.null;
+
+    const userFromDb = {
+      id: userInDb?.id,
+      name: userInDb?.name,
+      email: userInDb?.email,
+      birthDate: userInDb?.birthDate.toISOString(),
+    }
+
+    expect(response.data).to.be.deep.eq(userFromDb);
   });
 });
 
