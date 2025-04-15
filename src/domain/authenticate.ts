@@ -1,9 +1,11 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { AuthRequest } from "../models/auth-request.types";
 import { AuthResponse } from "../models/auth-response.types";
 import { getUserByEmail } from "../repository/db-repository";
 
-const SALT_ROUNDS = 10;
+const JWT_SECRET = process.env.JWT_SECRET!;
+const JWT_EXPIRATION = process.env.JWT_EXPIRATION ? +process.env.JWT_EXPIRATION : 900
 
 export async function authenticationHandler(authCommand: AuthRequest): Promise<AuthResponse> {
   const { email, password } = authCommand;
@@ -16,6 +18,12 @@ export async function authenticationHandler(authCommand: AuthRequest): Promise<A
     throw new Error("Credenciais do usuário incorretas");
   }
 
+  const token = jwt.sign(
+    { email: user.email },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRATION }
+  );
+
   const userResponse: AuthResponse = {
     user: {
       id: user.id,
@@ -23,7 +31,7 @@ export async function authenticationHandler(authCommand: AuthRequest): Promise<A
       birthDate: user.birthDate,
       email: user.email
     },
-    token: "idhadedmaomuh72y27idai.daiehdeuyihd7428hiqdakbaSDEDEHYDGa.AODdaljed4347SJBAah7e7"
+    token: token
   }
 
   return userResponse;
