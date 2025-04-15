@@ -2,6 +2,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import Fastify, { FastifyInstance } from "fastify";
 import { createUserHandler } from "./domain/create-user";
 import { findUsersHandler } from "./domain/find-users";
+import { createError } from "./error-handler";
 import { UserRequest } from "./models/user-request.types";
 import { isStrongPassword } from "./shared/user-validation";
 
@@ -14,7 +15,11 @@ fastify.get("/users", async (_, reply) => {
     reply.status(200).send(userResponse);
 
   } catch (error: unknown) {
-    reply.send({ error: "Failed to fetch users" });
+    const message = "Falha ao buscar o usuário";
+    const codeMessage = "ERRO";
+    const details = "Tente novamente.";
+
+    createError(reply, 500, message, codeMessage, details)
   }
 });
 
@@ -35,9 +40,9 @@ fastify.post<{ Body: UserRequest }>("/users", {
     const { body } = request;
 
     if (!isStrongPassword(body.password)) {
-      return reply.status(400).send({
-        error: 'Password must be at least 6 characters long and contain at least 1 letter and 1 digit',
-      });
+      const message = "A senha deve ter pelo menos 6 caracteres e conter pelo menos 1 letra e 1 dígito"
+      const code = "SENHA_FRACA"
+      return createError(reply, 400, message, code);
     }
 
     const userResponse = await createUserHandler(body)
@@ -47,10 +52,17 @@ fastify.post<{ Body: UserRequest }>("/users", {
     const { code } = error as PrismaClientKnownRequestError
 
     if (code === 'P2002') {
-      reply.status(409).send({ error: `Failed to create user: Unique constraint failed` });
+      const message = "Falha ao criar o usuário: email já existe";
+      const codeMessage = "EMAIL_DUPLICADO";
+      const details = "Email já existe no banco de dados e deve ser único";
+      return createError(reply, 409, message, codeMessage, details);
     }
 
-    reply.status(500).send({ error: `Failed to create user` });
+    const message = "Falha ao criar o usuário";
+    const codeMessage = "ERRO";
+    const details = "Tente novamente.";
+
+    createError(reply, 500, message, codeMessage, details)
   }
 });
 
