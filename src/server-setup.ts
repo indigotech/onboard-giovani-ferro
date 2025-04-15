@@ -73,6 +73,7 @@ fastify.post<{ Body: AuthRequest }>("/auth", {
       properties: {
         email: { type: 'string', format: 'email' },
         password: { type: 'string' },
+        rememberMe: { type: 'boolean' },
       }
     }
   }
