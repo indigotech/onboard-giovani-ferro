@@ -38,7 +38,7 @@ export function errorHandlerSetup(error: FastifyError, reply: FastifyReply) {
     createError(
       {
         reply,
-        statusCode: error.statusCode ?? 500,
+        statusCode: error.statusCode,
         message: error.message,
         code: "ERRO_INESPERADO"
       }
