@@ -34,6 +34,22 @@ export async function getUserByEmail(email: string): Promise<UserEntity> {
   }
 }
 
+export async function getUserById(id: number): Promise<UserEntity> {
+  try {
+    const user = await prisma.user.findUnique({ where: { id } });
+
+    if (!user) {
+      throw new Error("Usuário não encontrado");
+    }
+
+    return user
+  } catch (error) {
+
+    console.error("Error getting user:", error);
+    throw error;
+  }
+}
+
 export async function createUser(userRequest: UserRequest): Promise<UserEntity> {
   try {
     const user: UserEntity = await prisma.user.create({

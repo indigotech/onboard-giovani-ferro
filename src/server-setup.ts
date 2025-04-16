@@ -3,7 +3,7 @@ import Fastify, { FastifyInstance } from "fastify";
 import { AuthenticationMiddleware } from "./authenticate-middleware";
 import { authenticationHandler } from "./domain/authenticate";
 import { createUserHandler } from "./domain/create-user";
-import { findUsersHandler } from "./domain/find-users";
+import { findUserByIdHandler, findUsersHandler } from "./domain/find-users";
 import { configureErrorHandler, sendErrorResponse } from "./error-handler";
 import { AuthRequest } from "./models/auth-request.types";
 import { UserRequest } from "./models/user-request.types";
@@ -22,6 +22,22 @@ fastify.get("/users", async (_, reply) => {
     const codeMessage = "UNEXPECTED_ERROR";
 
     sendErrorResponse({ reply, statusCode: 500, message, code: codeMessage })
+  }
+});
+
+fastify.get<{ Params: { id: number } }>("/users/:id", { preHandler: [AuthenticationMiddleware.authenticate] }, async (request, reply) => {
+  try {
+    console.log(request.params.id, typeof request.params.id)
+    const userResponse = await findUserByIdHandler(request.params.id);
+
+    reply.status(200).send(userResponse);
+
+  } catch (error: unknown) {
+    const message = "Usuário não encontrado";
+    const codeMessage = "ERRO";
+    const details = ["Tente novamente."];
+
+    sendErrorResponse({ reply, statusCode: 400, message, code: codeMessage, details })
   }
 });
 
