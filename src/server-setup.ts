@@ -1,5 +1,6 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import Fastify, { FastifyInstance } from "fastify";
+import { authenticate } from "./authenticate-middleware";
 import { authenticationHandler } from "./domain/authenticate";
 import { createUserHandler } from "./domain/create-user";
 import { findUsersHandler } from "./domain/find-users";
@@ -35,7 +36,8 @@ fastify.post<{ Body: UserRequest }>("/users", {
         birthDate: { type: 'string', format: 'date' }
       }
     }
-  }
+  },
+  preHandler: [authenticate]
 }, async (request, reply) => {
   try {
     const { body } = request;
