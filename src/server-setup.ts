@@ -3,7 +3,7 @@ import Fastify, { FastifyInstance } from "fastify";
 import { authenticationHandler } from "./domain/authenticate";
 import { createUserHandler } from "./domain/create-user";
 import { findUsersHandler } from "./domain/find-users";
-import { createError, errorHandlerSetup } from "./error-handler";
+import { errorHandlerSetup, sendErrorResponse } from "./error-handler";
 import { AuthRequest } from "./models/auth-request.types";
 import { UserRequest } from "./models/user-request.types";
 import { isStrongPassword } from "./shared/user-validation";
@@ -20,7 +20,7 @@ fastify.get("/users", async (_, reply) => {
     const message = "Falha ao buscar o usuário. Tente novamente.";
     const codeMessage = "UNEXPECTED_ERROR";
 
-    createError({ reply, statusCode: 500, message, code: codeMessage })
+    sendErrorResponse({ reply, statusCode: 500, message, code: codeMessage })
   }
 });
 
@@ -43,7 +43,7 @@ fastify.post<{ Body: UserRequest }>("/users", {
     if (!isStrongPassword(body.password)) {
       const message = "A senha deve ter pelo menos 6 caracteres e conter pelo menos 1 letra e 1 dígito"
       const code = "WEAK_PASSWORD"
-      return createError({ reply, statusCode: 400, message, code });
+      return sendErrorResponse({ reply, statusCode: 400, message, code });
     }
 
     const userResponse = await createUserHandler(body)
@@ -56,13 +56,13 @@ fastify.post<{ Body: UserRequest }>("/users", {
       const message = "Falha ao criar o usuário: email já existe";
       const codeMessage = "DUPLICATE_EMAIL";
       const details = "Email already exists in the database and must be unique";
-      return createError({ reply, statusCode: 409, message, code: codeMessage, details });
+      return sendErrorResponse({ reply, statusCode: 409, message, code: codeMessage, details });
     }
 
     const message = "Falha ao buscar o usuário. Tente novamente.";
     const codeMessage = "UNEXPECTED_ERROR";
 
-    createError({ reply, statusCode: 500, message, code: codeMessage })
+    sendErrorResponse({ reply, statusCode: 500, message, code: codeMessage })
   }
 });
 
@@ -88,7 +88,7 @@ fastify.post<{ Body: AuthRequest }>("/auth", {
     const codeMessage = "INVALID_AUTHENTICATION";
     const details = "Email e/ou Senha do usuário está incorreto";
 
-    createError({ reply, statusCode: 401, message, code: codeMessage, details })
+    sendErrorResponse({ reply, statusCode: 401, message, code: codeMessage, details })
   }
 });
 

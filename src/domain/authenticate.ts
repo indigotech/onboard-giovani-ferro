@@ -29,6 +29,6 @@ export async function authenticationHandler(authCommand: AuthRequest): Promise<A
   return userResponse;
 }
 
-async function comparePassword(password: string, hashedPassword: string): Promise<Boolean> {
-  return await bcrypt.compare(password, hashedPassword)
+function comparePassword(password: string, hashedPassword: string): Promise<Boolean> {
+  return bcrypt.compare(password, hashedPassword)
 }
