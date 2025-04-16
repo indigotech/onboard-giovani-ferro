@@ -7,7 +7,6 @@ import { prisma } from "../src/client/client";
 const port = process.env.PORT ? +process.env.PORT : 30002;
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-
 describe("POST /auth", () => {
   it("Should return a valid token and user info on successful login", async () => {
     const mockUser = {

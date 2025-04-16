@@ -51,9 +51,7 @@ describe('POST Users - Create User', async () => {
 
     expect(response.data).to.be.deep.eq(userFromDb);
   });
-});
 
-describe('POST Users - Bearer Token missing', async () => {
   it("Should return an error if the Authorization header is missing", async () => {
     const mockUser = {
       username: "testuser",
@@ -70,11 +68,7 @@ describe('POST Users - Bearer Token missing', async () => {
       "Erro de autorização"
     );
   })
-});
 
-
-
-describe('POST Users - Token invalid', async () => {
   it("Should return an error if the token is invalid", async () => {
     const mockUser = {
       username: "testuser",
@@ -102,9 +96,7 @@ describe('POST Users - Token invalid', async () => {
       "O Token não é válido ou está expirado"
     );
   });
-})
 
-describe('POST Users - Token expired', async () => {
   it("Should return an error if the token is expired", async () => {
     const expiredToken = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "-1s" });
 
