@@ -58,9 +58,10 @@ describe('POST Users - Weak Password', async () => {
     expect(response.status).to.equal(400);
     expect(response.data).to.have.property("message");
     expect(response.data).to.have.property("code");
-    expect(response.data.message).to.equal(
-      "A senha deve ter pelo menos 6 caracteres e conter pelo menos 1 letra e 1 dígito"
-    );
+    expect(response.data).to.deep.equal({
+      message: "A senha deve ter pelo menos 6 caracteres e conter pelo menos 1 letra e 1 dígito",
+      code: "WEAK_PASSWORD",
+    });
   });
 });
 
@@ -80,9 +81,11 @@ describe('POST Users - Duplicated Email', async () => {
     expect(response.data).to.have.property("message");
     expect(response.data).to.have.property("code");
     expect(response.data).to.have.property("details");
-    expect(response.data.message).to.equal(
-      "Falha ao criar o usuário: email já existe"
-    );
+    expect(response.data).to.deep.equal({
+      message: "Falha ao criar o usuário: email já existe",
+      code: "DUPLICATE_EMAIL",
+      details: "Email already exists in the database and must be unique"
+    });
 
   });
 });

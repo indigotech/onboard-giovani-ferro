@@ -15,11 +15,10 @@ fastify.get("/users", async (_, reply) => {
     reply.status(200).send(userResponse);
 
   } catch (error: unknown) {
-    const message = "Falha ao buscar o usuário";
-    const codeMessage = "ERRO";
-    const details = "Tente novamente.";
+    const message = "Falha ao buscar o usuário. Tente novamente.";
+    const codeMessage = "UNEXPECTED_ERROR";
 
-    createError(reply, 500, message, codeMessage, details)
+    createError({ reply, statusCode: 500, message, code: codeMessage })
   }
 });
 
@@ -41,8 +40,8 @@ fastify.post<{ Body: UserRequest }>("/users", {
 
     if (!isStrongPassword(body.password)) {
       const message = "A senha deve ter pelo menos 6 caracteres e conter pelo menos 1 letra e 1 dígito"
-      const code = "SENHA_FRACA"
-      return createError(reply, 400, message, code);
+      const code = "WEAK_PASSWORD"
+      return createError({ reply, statusCode: 400, message, code });
     }
 
     const userResponse = await createUserHandler(body)
@@ -53,16 +52,15 @@ fastify.post<{ Body: UserRequest }>("/users", {
 
     if (code === 'P2002') {
       const message = "Falha ao criar o usuário: email já existe";
-      const codeMessage = "EMAIL_DUPLICADO";
-      const details = "Email já existe no banco de dados e deve ser único";
-      return createError(reply, 409, message, codeMessage, details);
+      const codeMessage = "DUPLICATE_EMAIL";
+      const details = "Email already exists in the database and must be unique";
+      return createError({ reply, statusCode: 409, message, code: codeMessage, details });
     }
 
-    const message = "Falha ao criar o usuário";
-    const codeMessage = "ERRO";
-    const details = "Tente novamente.";
+    const message = "Falha ao buscar o usuário. Tente novamente.";
+    const codeMessage = "UNEXPECTED_ERROR";
 
-    createError(reply, 500, message, codeMessage, details)
+    createError({ reply, statusCode: 500, message, code: codeMessage })
   }
 });
 
