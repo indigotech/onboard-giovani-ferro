@@ -4,3 +4,8 @@ export interface UserRequest {
     password: string;
     birthDate: string;
 }
+
+export interface PaginatedRequest {
+    page: number;
+    pageSize: number;
+}

@@ -4,3 +4,13 @@ export interface UserResponse {
     email: string;
     birthDate: Date;
 }
+
+
+export interface PaginatedResponse {
+    users: UserResponse[],
+    pagination: {
+        total: number;
+        hasNext: boolean;
+        hasPrevious: boolean;
+    }
+}

@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-async function seed() {
+export async function seed() {
   await prisma.user.createMany({ data: users, skipDuplicates: true });
 }
 

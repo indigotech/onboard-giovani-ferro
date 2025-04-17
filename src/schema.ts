@@ -6,12 +6,25 @@ export const getUserByIdOptions = {
     params: {
       type: "object",
       properties: {
-        id: { type: "number", pattern: "^[0-9]+$" }
+        id: { type: "integer", nullable: false }
       },
       required: ["id"],
     },
   },
   preHandler: [AuthenticationMiddleware.authenticate]
+}
+
+export const getUserOptions = {
+  schema: {
+    querystring: {
+      type: "object",
+      properties: {
+        pageSize: { type: "integer", nullable: false, minimum: 1, default: 15, },
+        page: { type: "integer", nullable: false, minimum: 1, default: 1, }
+      },
+    },
+  },
+  preHandler: [authenticate]
 }
 
 export const createUserOptions = {

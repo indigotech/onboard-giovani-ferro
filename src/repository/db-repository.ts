@@ -4,17 +4,44 @@ import { UserEntity } from "../entities/user-entity.types";
 import { ConflictException } from "../exceptions/conflict-exception";
 import { UserNotFoundException } from "../exceptions/not-found-exceptions";
 import { InternalServerException } from "../exceptions/server-exception";
-import { UserRequest } from "../models/user-request.types";
+import { PaginatedRequest, UserRequest } from "../models/user-request.types";
+import { PaginatedResponse } from "../models/user-response.types";
 
-export async function getUsers(): Promise<UserEntity[]> {
+export async function getUsers(request: PaginatedRequest): Promise<PaginatedResponse> {
   try {
-    const users: UserEntity[] = await prisma.user.findMany()
+    const totalUsers = await prisma.user.count()
+    const skip = (request.page - 1) * request.pageSize
+
+    const users: UserEntity[] = await prisma.user.findMany({
+      take: request.pageSize,
+      skip: skip,
+      orderBy: {
+        name: 'asc'
+      },
+    })
+
+    const hasNext = totalUsers > request.pageSize * request.page;
+    const hasPrevious = totalUsers > 0 && skip > 0;
 
     if (!users || users.length === 0) {
-      return [];
+      return {
+        users: [],
+        pagination: {
+          total: totalUsers,
+          hasNext,
+          hasPrevious
+        }
+      }
     }
 
-    return users
+    return {
+      users,
+      pagination: {
+        total: totalUsers,
+        hasNext,
+        hasPrevious
+      }
+    }
   } catch (error) {
     throw new InternalServerException({ details: "Error when trying to find users from DB" });
   }
