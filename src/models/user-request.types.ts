@@ -21,3 +21,8 @@ export interface PaginatedRequest {
     page: number;
     pageSize: number;
 }
+
+export interface PaginatedRequest {
+    page: number;
+    pageSize: number;
+}

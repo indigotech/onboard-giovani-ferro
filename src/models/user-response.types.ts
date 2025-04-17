@@ -15,3 +15,13 @@ export interface PaginatedResponse {
         hasPrevious: boolean;
     }
 }
+
+
+export interface PaginatedResponse {
+    users: UserResponse[],
+    pagination: {
+        total: number;
+        hasNext: boolean;
+        hasPrevious: boolean;
+    }
+}
