@@ -8,7 +8,7 @@ import { UserResponse } from "../src/models/user-response.types";
 const port = process.env.PORT ? +process.env.PORT : 30002;
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-describe('POST Users - Create User', async () => {
+describe('POST /users - Create User', async () => {
   it('should create new user', async () => {
     const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
 
@@ -64,9 +64,11 @@ describe('POST Users - Create User', async () => {
 
     expect(response.status).to.equal(401);
 
-    expect(response.data.message).to.equal(
-      "Erro de autorização"
-    );
+    expect(response.data).to.deep.equal({
+      message: "O cabeçalho de autorização está ausente ou é inválido",
+      code: "INVALID_AUTHENTICATION",
+      details: "The token does not exists or has invalid format.",
+    });
   })
 
   it("Should return an error if the token is invalid", async () => {
@@ -92,9 +94,10 @@ describe('POST Users - Create User', async () => {
 
     expect(response.status).to.equal(401);
 
-    expect(response.data.message).to.equal(
-      "O Token não é válido ou está expirado"
-    );
+    expect(response.data).to.deep.equal({
+      message: "O Token não é válido ou está expirado",
+      code: "INVALID_AUTHENTICATION",
+    });
   });
 
   it("Should return an error if the token is expired", async () => {
@@ -119,59 +122,62 @@ describe('POST Users - Create User', async () => {
     );
 
     expect(response.status).to.equal(401);
-    expect(response.data.message).to.equal(
-      "O Token não é válido ou está expirado"
-    );
-  });
-})
-
-it('should throw password validation', async () => {
-  const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
-
-  const mockUser: UserRequest = {
-    name: "testuser",
-    email: "mockuser@example.com",
-    password: "password",
-    birthDate: "2000-01-01",
-  }
-
-  const response = await axios.post(`http://localhost:${port}/users`, mockUser, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    validateStatus: () => true
+    expect(response.data).to.have.property("message");
+    expect(response.data).to.have.property("code");
+    expect(response.data).to.deep.equal({
+      message: "O Token não é válido ou está expirado",
+      code: "INVALID_AUTHENTICATION"
+    });
   });
 
-  expect(response.status).to.equal(400);
-  expect(response.data).to.deep.equal({
-    message: "A senha deve ter pelo menos 6 caracteres e conter pelo menos 1 letra e 1 dígito",
-    code: "WEAK_PASSWORD",
-  });
-});
+  it('should throw password validation', async () => {
+    const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
 
-it('should throw email validation', async () => {
-  const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
+    const mockUser: UserRequest = {
+      name: "testuser",
+      email: "mockuser@example.com",
+      password: "password",
+      birthDate: "2000-01-01",
+    }
 
-  const mockUser: UserRequest = {
-    name: "testuser",
-    email: "testuser@example.com",
-    password: "Password123",
-    birthDate: "2000-01-01",
-  }
+    const response = await axios.post(`http://localhost:${port}/users`, mockUser, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      validateStatus: () => true
+    });
 
-  await prisma.user.create({ data: { ...mockUser, birthDate: new Date(mockUser.birthDate) } })
-
-  const response = await axios.post(`http://localhost:${port}/users`, mockUser, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    validateStatus: () => true
-  });
-  expect(response.status).to.equal(409);
-  expect(response.data).to.deep.equal({
-    message: "Falha ao criar o usuário: email já existe",
-    code: "DUPLICATE_EMAIL",
-    details: "Email already exists in the database and must be unique"
+    expect(response.status).to.equal(400);
+    expect(response.data).to.deep.equal({
+      message: "A senha deve ter pelo menos 6 caracteres e conter pelo menos 1 letra e 1 dígito",
+      code: "WEAK_PASSWORD",
+    });
   });
 
+  it('should throw email validation', async () => {
+    const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
+
+    const mockUser: UserRequest = {
+      name: "testuser",
+      email: "testuser@example.com",
+      password: "Password123",
+      birthDate: "2000-01-01",
+    }
+
+    await prisma.user.create({ data: { ...mockUser, birthDate: new Date(mockUser.birthDate) } })
+
+    const response = await axios.post(`http://localhost:${port}/users`, mockUser, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      validateStatus: () => true
+    });
+    expect(response.status).to.equal(409);
+    expect(response.data).to.deep.equal({
+      message: "Falha ao criar o usuário: email já existe",
+      code: "DUPLICATED_PARAMETER",
+      details: "Email already exists in the database and must be unique"
+    });
+
+  });
 });

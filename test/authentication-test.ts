@@ -77,12 +77,13 @@ describe("POST /auth", () => {
       email: "nonexistent@example.com", password: "Password123"
     }, { validateStatus: () => true });
 
-    expect(response.status).to.equal(401);
+    expect(response.status).to.equal(404);
+    expect(response.data).to.have.property("message");
+    expect(response.data).to.have.property("code");
 
-    expect(response.data).to.be.deep.equal({
-      message: "Credenciais Inválidas",
-      code: "INVALID_AUTHENTICATION",
-      details: "Email e/ou Senha do usuário está incorreto"
+    expect(response.data).to.deep.equal({
+      message: "O usuário não foi encontrado no sistema",
+      code: "USER_NOT_FOUND",
     });
   });
 
@@ -104,11 +105,13 @@ describe("POST /auth", () => {
     }, { validateStatus: () => true });
 
     expect(response.status).to.equal(401);
-
-    expect(response.data).to.be.deep.equal({
-      message: "Credenciais Inválidas",
+    expect(response.data).to.have.property("message");
+    expect(response.data).to.have.property("code");
+    expect(response.data).to.have.property("details");
+    expect(response.data).to.deep.equal({
+      message: "Credenciais do usuário incorretas.",
       code: "INVALID_AUTHENTICATION",
-      details: "Email e/ou Senha do usuário está incorreto"
+      details: "Password is not valid."
     });
   });
 });
