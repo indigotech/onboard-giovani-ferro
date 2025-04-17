@@ -30,18 +30,20 @@ export function errorHandlerSetup(error: FastifyError, reply: FastifyReply) {
       reply,
       statusCode: 400,
       message: "Erro no envio da mensagem devido ao mau formato da requisição",
-      code: "ERRO_REQUISICAO",
-      details: error.validation.at(0)?.message
-    }
-    )
+      code: "INVALID_PARAMETER",
+      details: error.validation?.at(0)?.message
+    };
+
+    reply.status(400).send(response);
   } else {
-    createError(
-      {
-        reply,
-        statusCode: error.statusCode,
-        message: error.message,
-        code: "ERRO_INESPERADO"
-      }
-    );
+    const statusCode = error.statusCode ? error.statusCode : 500;
+
+    const response: ErrorResponse = {
+      message: error.message || 'Erro interno do servidor',
+      code: error.code ? error.code : 'UNEXPECTED_ERROR',
+      details: 'details' in error ? error.details : undefined
+    };
+
+    reply.status(statusCode).send(response);
   }
 }

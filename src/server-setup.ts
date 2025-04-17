@@ -1,17 +1,28 @@
 import Fastify, { FastifyInstance } from "fastify";
 import { authenticationHandler } from "./domain/authenticate";
 import { createUserHandler } from "./domain/create-user";
-import { findUsersHandler } from "./domain/find-users";
+import { findUserByIdHandler, findUsersHandler } from "./domain/find-users";
 import { configureErrorHandler } from "./error-handler";
 import { AuthRequest } from "./models/auth-request.types";
 import { UserRequest } from "./models/user-request.types";
-import { authenticationOptions, createUserOptions } from "./schema";
+import { authenticationOptions, createUserOptions, getUserByIdOptions } from "./schema";
 
 const fastify: FastifyInstance = Fastify({ logger: true });
 
 fastify.get("/users", async (_, reply) => {
 
   const userResponse = await findUsersHandler();
+
+  reply.status(200).send(userResponse);
+});
+
+fastify.post<{ Body: UserRequest }>("/users", createUserOptions, async (request, reply) => {
+  const { body } = request;
+  reply.status(200).send(userResponse);
+});
+
+fastify.get<{ Params: { id: number } }>("/users/:id", getUserByIdOptions, async (request, reply) => {
+  const userResponse = await findUserByIdHandler(request.params.id);
 
   reply.status(200).send(userResponse);
 });

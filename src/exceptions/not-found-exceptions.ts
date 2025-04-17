@@ -1,7 +1,6 @@
 import { CustomException } from "./custom-exception";
 import { ExceptionResponse } from "./exception.types";
 
-
 export class UserNotFoundException extends CustomException {
   static readonly STATUS_CODE = 404;
   static readonly DEFAULT_MESSAGE = "O usuário não foi encontrado no sistema";
