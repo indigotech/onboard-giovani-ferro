@@ -9,6 +9,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:migrate_test": "dotenv -e test.env prisma migrate dev",
+    "db:seed": "tsx seeds/populate-db.ts",
     "test": "dotenv -e test.env mocha"
   },
   "author": "Giovani Ferro",
@@ -23,6 +24,7 @@
   "type": "module",
   "devDependencies": {
     "@eslint/js": "9.24.0",
+    "@faker-js/faker": "9.7.0",
     "@types/bcrypt": "5.0.2",
     "@types/chai": "5.2.1",
     "@types/jsonwebtoken": "9.0.9",
