@@ -5,18 +5,24 @@ import { ConflictException } from "../exceptions/conflict-exception";
 import { UserNotFoundException } from "../exceptions/not-found-exceptions";
 import { InternalServerException } from "../exceptions/server-exception";
 import { PaginatedRequest, UserRequest } from "../models/user-request.types";
-import { PaginatedResponse } from "../models/user-response.types";
+import { PaginatedResponse, UserResponse } from "../models/user-response.types";
 
 export async function getUsers(request: PaginatedRequest): Promise<PaginatedResponse> {
   try {
     const totalUsers = await prisma.user.count()
     const skip = (request.page - 1) * request.pageSize
 
-    const users: UserEntity[] = await prisma.user.findMany({
+    const users: UserResponse[] = await prisma.user.findMany({
       take: request.pageSize,
       skip: skip,
       orderBy: {
         name: 'asc'
+      },
+      select: {
+        birthDate: true,
+        email: true,
+        id: true,
+        name: true
       },
     })
 

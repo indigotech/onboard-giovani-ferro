@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -7,18 +6,21 @@ export async function seed() {
   await prisma.user.createMany({ data: users, skipDuplicates: true });
 }
 
-function createUserMock() {
-  return {
-    name: faker.internet.username(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    birthDate: faker.date.birthdate(),
+
+function createTestUsers(count: number) {
+  const users: any = []
+  for (let i = 0; i < count; i++) {
+    users.push({
+      name: `user${String.fromCharCode(65 + i)}`,
+      email: `user${i}@example.com`,
+      password: `user${i}Password123`,
+      birthDate: new Date("2000-01-01"),
+    });
   }
+  return users
 }
 
-const users = faker.helpers.multiple(createUserMock, {
-  count: 50,
-});
+const users = createTestUsers(50);
 
 seed().catch(e => {
   console.error(e);

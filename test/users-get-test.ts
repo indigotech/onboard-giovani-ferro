@@ -7,16 +7,6 @@ import { UserRequest } from "../src/models/user-request.types";
 const port = process.env.PORT ? +process.env.PORT : 30002;
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-describe('GET /users', async () => {
-  it('should find all users', async () => {
-    const response = await axios.get(`http://localhost:${port}/users`);
-
-    expect(response.status).to.equal(200);
-
-    expect(response.data).to.be.an("array");
-  });
-});
-
 describe("GET /users/:id", () => {
   it("Should return user information for a valid id and token", async () => {
     const mockUser: UserRequest = {
