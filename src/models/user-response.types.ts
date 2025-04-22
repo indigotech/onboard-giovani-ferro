@@ -16,7 +16,6 @@ export interface PaginatedResponse {
     }
 }
 
-
 export interface PaginatedResponse {
     users: UserResponse[],
     pagination: {
