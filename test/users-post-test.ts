@@ -43,9 +43,7 @@ describe('POST Users - Create User', async () => {
 
     expect(response.data).to.be.deep.eq(userFromDb);
   });
-});
 
-describe('POST Users - Weak Password', async () => {
   it('should throw password validation', async () => {
     const mockUser: UserRequest = {
       name: "testuser",
@@ -63,9 +61,7 @@ describe('POST Users - Weak Password', async () => {
       code: "WEAK_PASSWORD",
     });
   });
-});
 
-describe('POST Users - Duplicated Email', async () => {
   it('should throw email validation', async () => {
     const mockUser: UserRequest = {
       name: "testuser",

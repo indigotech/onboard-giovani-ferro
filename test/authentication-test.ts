@@ -8,7 +8,7 @@ const port = process.env.PORT ? +process.env.PORT : 30002;
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 
-describe("POST Authenticate - Authentication Sucessful", () => {
+describe("POST /auth", () => {
   it("Should return a valid token and user info on successful login", async () => {
     const mockUser = {
       name: "testuser",
@@ -41,13 +41,11 @@ describe("POST Authenticate - Authentication Sucessful", () => {
 
     const decodedToken: any = jwt.verify(token, JWT_SECRET);
 
-    expect(decodedToken).to.have.property("id", user.id);
+    expect(decodedToken.id).to.be.deep.eq(user.id);
     const now = Math.floor(Date.now() / 1000);
     expect(decodedToken.exp - now).to.be.closeTo(24 * 3600, 5);
   });
-})
 
-describe("POST Authenticate - Authentication Sucessful with Remember me", () => {
   it("Should return a valid token and expiration time of 1 day", async () => {
     const mockUser = {
       name: "testuser",
@@ -74,9 +72,7 @@ describe("POST Authenticate - Authentication Sucessful with Remember me", () => 
     const now = Math.floor(Date.now() / 1000);
     expect(decodedToken.exp - now).to.be.closeTo(7 * 24 * 3600, 5);
   });
-})
 
-describe("POST /login - Email Not Found", () => {
   it("Should return an error if the email is not found", async () => {
     const response = await axios.post(`http://localhost:${port}/auth`, {
       email: "nonexistent@example.com", password: "Password123"
@@ -86,14 +82,14 @@ describe("POST /login - Email Not Found", () => {
     expect(response.data).to.have.property("message");
     expect(response.data).to.have.property("code");
     expect(response.data).to.have.property("details");
-    expect(response.data.message).to.equal(
-      "Credenciais Inválidas"
-    );
 
+    expect(response.data).to.be.deep.equal({
+      message: "Credenciais Inválidas",
+      code: "INVALID_AUTHENTICATION",
+      details: "Email e/ou Senha do usuário está incorreto"
+    });
   });
-})
 
-describe("POST /login - Incorrect Password", () => {
   it("Should return an error if the password is incorrect", async () => {
     const mockUser = {
       name: "testuser",
@@ -115,8 +111,10 @@ describe("POST /login - Incorrect Password", () => {
     expect(response.data).to.have.property("message");
     expect(response.data).to.have.property("code");
     expect(response.data).to.have.property("details");
-    expect(response.data.message).to.equal(
-      "Credenciais Inválidas"
-    );
+    expect(response.data).to.be.deep.equal({
+      message: "Credenciais Inválidas",
+      code: "INVALID_AUTHENTICATION",
+      details: "Email e/ou Senha do usuário está incorreto"
+    });
   });
 });
