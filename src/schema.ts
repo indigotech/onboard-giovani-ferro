@@ -26,19 +26,6 @@ export const getUserOptions = {
   preHandler: [AuthenticationMiddleware.authenticate]
 }
 
-export const getUserOptions = {
-  schema: {
-    querystring: {
-      type: "object",
-      properties: {
-        pageSize: { type: "integer", nullable: false, minimum: 1, default: 15, },
-        page: { type: "integer", nullable: false, minimum: 1, default: 1, }
-      },
-    },
-  },
-  preHandler: [authenticate]
-}
-
 export const createUserOptions = {
   schema: {
     body: {
