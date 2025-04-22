@@ -2,7 +2,7 @@ export interface UserEntity {
   id: number;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   birthDate: Date;
   addresses: Address[];
 }
@@ -16,4 +16,5 @@ export interface Address {
   neighborhood: string,
   city: string,
   state: string,
+  userId: number,
 }

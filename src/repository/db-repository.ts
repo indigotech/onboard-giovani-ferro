@@ -22,8 +22,9 @@ export async function getUsers(request: PaginatedRequest): Promise<PaginatedResp
         birthDate: true,
         email: true,
         id: true,
-        name: true
-      },
+        name: true,
+        addresses: true,
+      }
     })
 
     const hasNext = totalUsers > request.pageSize * request.page;
@@ -81,7 +82,9 @@ export async function createUser(userRequest: UserRequest): Promise<UserEntity> 
         email: userRequest.email,
         password: userRequest.password,
         birthDate: new Date(userRequest.birthDate),
-      }, include: { addresses: true }
+        addresses: { create: userRequest.addresses }
+      },
+      include: { addresses: true }
     })
 
     return user;
