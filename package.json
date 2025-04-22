@@ -10,6 +10,7 @@
     "db:migrate": "prisma migrate dev",
     "db:migrate_test": "dotenv -e test.env prisma migrate dev",
     "db:seed": "tsx seeds/populate-db.ts",
+    "db:seed_test": "dotenv -e test.env tsx seeds/populate-db.ts",
     "test": "dotenv -e test.env mocha"
   },
   "author": "Giovani Ferro",
