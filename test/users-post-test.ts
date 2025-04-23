@@ -54,8 +54,6 @@ describe('POST Users - Create User', async () => {
     const response = await axios.post(`http://localhost:${port}/users`, mockUser, { validateStatus: () => true });
 
     expect(response.status).to.equal(400);
-    expect(response.data).to.have.property("message");
-    expect(response.data).to.have.property("code");
     expect(response.data).to.deep.equal({
       message: "A senha deve ter pelo menos 6 caracteres e conter pelo menos 1 letra e 1 dígito",
       code: "WEAK_PASSWORD",
@@ -74,9 +72,6 @@ describe('POST Users - Create User', async () => {
 
     const response = await axios.post(`http://localhost:${port}/users`, mockUser, { validateStatus: () => true });
     expect(response.status).to.equal(409);
-    expect(response.data).to.have.property("message");
-    expect(response.data).to.have.property("code");
-    expect(response.data).to.have.property("details");
     expect(response.data).to.deep.equal({
       message: "Falha ao criar o usuário: email já existe",
       code: "DUPLICATE_EMAIL",

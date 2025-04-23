@@ -46,7 +46,7 @@ describe("POST /auth", () => {
     expect(decodedToken.exp - now).to.be.closeTo(24 * 3600, 5);
   });
 
-  it("Should return a valid token and expiration time of 1 day", async () => {
+  it("Should return a valid token and of long expiration", async () => {
     const mockUser = {
       name: "testuser",
       email: "testuser@example.com",
@@ -79,9 +79,6 @@ describe("POST /auth", () => {
     }, { validateStatus: () => true });
 
     expect(response.status).to.equal(401);
-    expect(response.data).to.have.property("message");
-    expect(response.data).to.have.property("code");
-    expect(response.data).to.have.property("details");
 
     expect(response.data).to.be.deep.equal({
       message: "Credenciais Inválidas",
@@ -108,9 +105,7 @@ describe("POST /auth", () => {
     }, { validateStatus: () => true });
 
     expect(response.status).to.equal(401);
-    expect(response.data).to.have.property("message");
-    expect(response.data).to.have.property("code");
-    expect(response.data).to.have.property("details");
+
     expect(response.data).to.be.deep.equal({
       message: "Credenciais Inválidas",
       code: "INVALID_AUTHENTICATION",
