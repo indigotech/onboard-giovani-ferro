@@ -1,10 +1,24 @@
-import { FastifyError, FastifyReply } from "fastify";
-import { CustomException } from "./exceptions/custom-exception";
-import { ErrorResponse } from "./exceptions/exception.types";
+import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
+import { GraphQLError } from "graphql";
+import { CustomError, ErrorResponse } from "./exceptions/exception.types";
 
-export function configureErrorHandler(error: FastifyError | CustomException, reply: FastifyReply) {
-  if (error instanceof CustomException) {
-    const statusCode = error.statusCode ?? 500;
+export function configureErrorHandler(error: FastifyError | CustomError, request: FastifyRequest, reply: FastifyReply) {
+  if (request.url.startsWith('/graphql')) {
+    return configureGraphqlErrorHandler(error)
+  }
+
+  if ('validation' in error) {
+    const response: ErrorResponse = {
+      message: "Erro no envio da mensagem devido ao mau formato da requisição",
+      code: "INVALID_PARAMETER",
+      details: error.validation?.at(0)?.message
+    };
+
+    reply.status(400).send(response);
+  } else {
+    const statusCode = error.statusCode ? error.statusCode : 500;
+
+    reply.send(error)
 
     const response: ErrorResponse = {
       message: error.message ?? 'Erro interno do servidor',
@@ -21,5 +35,32 @@ export function configureErrorHandler(error: FastifyError | CustomException, rep
     };
 
     reply.status(400).send(response);
+  }
+}
+
+export function configureGraphqlErrorHandler(error: FastifyError | CustomError) {
+  console.log(error)
+  if (error && typeof error === 'object' && 'validation' in error) {
+    return new GraphQLError(
+      "Erro no envio da mensagem devido ao mau formato da requisição",
+      {
+        extensions: {
+          code: "INVALID_PARAMETER",
+          details: error.validation?.at(0)?.message
+        }
+      }
+    );
+  }
+  else {
+    const customError = error as CustomError;
+    return new GraphQLError(
+      customError.message || 'Erro interno do servidor',
+      {
+        extensions: {
+          code: customError.code || 'UNEXPECTED_ERROR',
+          details: 'details' in customError ? customError.details : undefined
+        }
+      }
+    );
   }
 }
