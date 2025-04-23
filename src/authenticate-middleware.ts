@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import jwt from "jsonwebtoken";
-import { createError } from "./error-handler";
+import { sendErrorResponse } from "./error-handler";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -9,7 +9,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      createError(reply, 401, "Erro de autorização", "AUTORIZACAO_INVALIDA", ["O cabeçalho de autorização está ausente ou é inválido"]);
+      sendErrorResponse({ reply, statusCode: 401, message: "Erro de autorização", code: "AUTORIZACAO_INVALIDA", details: "O cabeçalho de autorização está ausente ou é inválido" });
       return;
     }
 
@@ -17,10 +17,10 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
 
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
       if (err) {
-        createError(reply, 403, "O Token não é válido ou está expirado", "AUTORIZACAO_INVALIDA", [err.message]);
+        sendErrorResponse({ reply, statusCode: 401, message: "O Token não é válido ou está expirado", code: "AUTORIZACAO_INVALIDA", details: err.message });
       }
     });
   } catch (error) {
-    createError(reply, 403, "Erro de autorização", "AUTORIZACAO_INVALIDA", ["O Token não é válido"]);
+    sendErrorResponse({ reply, statusCode: 401, message: "Erro de autorização", code: "AUTORIZACAO_INVALIDA", details: "O Token não é válido" });
   }
 }

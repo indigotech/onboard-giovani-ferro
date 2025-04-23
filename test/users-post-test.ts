@@ -65,9 +65,7 @@ describe('POST Users - Bearer Token missing', async () => {
     const response = await axios.post(`http://localhost:${port}/users`, mockUser, { validateStatus: () => true });
 
     expect(response.status).to.equal(401);
-    expect(response.data).to.have.property("message");
-    expect(response.data).to.have.property("code");
-    expect(response.data).to.have.property("details");
+
     expect(response.data.message).to.equal(
       "Erro de autorização"
     );
@@ -98,10 +96,8 @@ describe('POST Users - Token invalid', async () => {
       }
     );
 
-    expect(response.status).to.equal(403);
-    expect(response.data).to.have.property("message");
-    expect(response.data).to.have.property("code");
-    expect(response.data).to.have.property("details");
+    expect(response.status).to.equal(401);
+
     expect(response.data.message).to.equal(
       "O Token não é válido ou está expirado"
     );
@@ -130,10 +126,7 @@ describe('POST Users - Token expired', async () => {
       }
     );
 
-    expect(response.status).to.equal(403);
-    expect(response.data).to.have.property("message");
-    expect(response.data).to.have.property("code");
-    expect(response.data).to.have.property("details");
+    expect(response.status).to.equal(401);
     expect(response.data.message).to.equal(
       "O Token não é válido ou está expirado"
     );
@@ -189,5 +182,4 @@ it('should throw email validation', async () => {
     details: "Email already exists in the database and must be unique"
   });
 
-});
 });
