@@ -3,7 +3,7 @@ import Fastify, { FastifyInstance } from "fastify";
 import { authenticationHandler } from "./domain/authenticate";
 import { createUserHandler } from "./domain/create-user";
 import { findUsersHandler } from "./domain/find-users";
-import { errorHandlerSetup, sendErrorResponse } from "./error-handler";
+import { configureErrorHandler, sendErrorResponse } from "./error-handler";
 import { AuthRequest } from "./models/auth-request.types";
 import { UserRequest } from "./models/user-request.types";
 import { isStrongPassword } from "./shared/user-validation";
@@ -73,6 +73,7 @@ fastify.post<{ Body: AuthRequest }>("/auth", {
       properties: {
         email: { type: 'string', format: 'email' },
         password: { type: 'string' },
+        rememberMe: { type: 'boolean' },
       }
     }
   }
@@ -92,7 +93,7 @@ fastify.post<{ Body: AuthRequest }>("/auth", {
   }
 });
 
-fastify.setErrorHandler((error, request, reply) => errorHandlerSetup(error, reply));
+fastify.setErrorHandler((error, request, reply) => configureErrorHandler(error, reply));
 
 export async function serverSetup(): Promise<FastifyInstance> {
   try {

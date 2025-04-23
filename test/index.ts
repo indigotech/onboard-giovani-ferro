@@ -11,6 +11,7 @@ before(async () => {
   fastify = await serverSetup()
 })
 
+import "./authentication-test";
 import "./users-get-test";
 import "./users-post-test";
 

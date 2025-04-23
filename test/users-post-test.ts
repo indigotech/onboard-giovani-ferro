@@ -43,9 +43,7 @@ describe('POST Users - Create User', async () => {
 
     expect(response.data).to.be.deep.eq(userFromDb);
   });
-});
 
-describe('POST Users - Weak Password', async () => {
   it('should throw password validation', async () => {
     const mockUser: UserRequest = {
       name: "testuser",
@@ -56,16 +54,12 @@ describe('POST Users - Weak Password', async () => {
     const response = await axios.post(`http://localhost:${port}/users`, mockUser, { validateStatus: () => true });
 
     expect(response.status).to.equal(400);
-    expect(response.data).to.have.property("message");
-    expect(response.data).to.have.property("code");
     expect(response.data).to.deep.equal({
       message: "A senha deve ter pelo menos 6 caracteres e conter pelo menos 1 letra e 1 dígito",
       code: "WEAK_PASSWORD",
     });
   });
-});
 
-describe('POST Users - Duplicated Email', async () => {
   it('should throw email validation', async () => {
     const mockUser: UserRequest = {
       name: "testuser",
@@ -78,9 +72,6 @@ describe('POST Users - Duplicated Email', async () => {
 
     const response = await axios.post(`http://localhost:${port}/users`, mockUser, { validateStatus: () => true });
     expect(response.status).to.equal(409);
-    expect(response.data).to.have.property("message");
-    expect(response.data).to.have.property("code");
-    expect(response.data).to.have.property("details");
     expect(response.data).to.deep.equal({
       message: "Falha ao criar o usuário: email já existe",
       code: "DUPLICATE_EMAIL",
