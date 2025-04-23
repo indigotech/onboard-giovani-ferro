@@ -3,9 +3,11 @@ import { GraphQLError } from "graphql";
 import { CustomError, ErrorResponse } from "./exceptions/exception.types";
 
 export function configureErrorHandler(error: FastifyError | CustomError, request: FastifyRequest, reply: FastifyReply) {
+  console.log(request.url)
   if (request.url.startsWith('/graphql')) {
-    return configureGraphqlErrorHandler(error)
+    return;
   }
+  console.log(error)
 
   if ('validation' in error) {
     const response: ErrorResponse = {
@@ -17,8 +19,6 @@ export function configureErrorHandler(error: FastifyError | CustomError, request
     reply.status(400).send(response);
   } else {
     const statusCode = error.statusCode ? error.statusCode : 500;
-
-    reply.send(error)
 
     const response: ErrorResponse = {
       message: error.message ?? 'Erro interno do servidor',
@@ -39,7 +39,6 @@ export function configureErrorHandler(error: FastifyError | CustomError, request
 }
 
 export function configureGraphqlErrorHandler(error: FastifyError | CustomError) {
-  console.log(error)
   if (error && typeof error === 'object' && 'validation' in error) {
     return new GraphQLError(
       "Erro no envio da mensagem devido ao mau formato da requisição",

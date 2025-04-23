@@ -4,7 +4,7 @@ import { authenticate } from "./authenticate-middleware";
 import { authenticationHandler } from "./domain/authenticate";
 import { createUserHandler } from "./domain/create-user";
 import { findUserByIdHandler, findUsersHandler } from "./domain/find-users";
-import { configureErrorHandler, configureGraphqlErrorHandler } from "./error-handler";
+import { configureErrorHandler } from "./error-handler";
 import { CustomError } from "./exceptions/exception.types";
 import { AuthRequest } from "./models/auth-request.types";
 import { PaginatedRequest, UserRequest } from "./models/user-request.types";
@@ -53,12 +53,24 @@ fastify.register(mercurius, {
   context: async (request, reply) => {
     try {
       await authenticate(request, reply);
+      return { request };
     } catch (error) {
       const customError = error as CustomError;
 
-      configureGraphqlErrorHandler(customError)
+      console.log({ customError }, "context")
+
+      return (
+        {
+          error: {
+            message: customError.message || 'Erro interno do servidor',
+            extensions: {
+              code: customError.code || 'UNEXPECTED_ERROR',
+              details: 'details' in customError ? customError.details : undefined
+            }
+          }
+        }
+      );
     }
-    return { request };
   },
 })
 
