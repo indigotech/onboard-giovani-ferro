@@ -1,7 +1,7 @@
 import { UserEntity } from "../entities/user-entity.types";
 import { UserResponse } from "../models/user-response.types";
 
-export function userResponseBuilder(user: UserEntity) {
+export function userResponseMapper(user: UserEntity) {
   const userResponse: UserResponse = {
     id: user.id,
     name: user.name,

@@ -3,7 +3,7 @@ import { BadRequestEsception } from "../exceptions/bad-request-exception";
 import { UserRequest } from "../models/user-request.types";
 import { UserResponse } from "../models/user-response.types";
 import { createUser } from "../repository/db-repository";
-import { userResponseBuilder } from "../shared/user-response-builder";
+import { userResponseMapper } from "../shared/user-response-mapper";
 import { isStrongPassword } from "../shared/user-validation";
 
 const SALT_ROUNDS = 10;
@@ -20,7 +20,7 @@ export async function createUserHandler(userCommand: UserRequest): Promise<UserR
 
   const user = await createUser(userRequest);
 
-  const userResponse = userResponseBuilder(user);
+  const userResponse = userResponseMapper(user);
 
   return userResponse
 }
