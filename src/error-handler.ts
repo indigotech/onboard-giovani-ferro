@@ -1,7 +1,7 @@
 import { FastifyError, FastifyReply } from "fastify";
 
 interface CustomError {
-  reply: FastifyReply, statusCode: number, message: string, code: string, details?: string
+  reply: FastifyReply, statusCode: number, message: string, code: string, details?: string | string[]
 }
 
 export function sendErrorResponse({ reply, statusCode, message, code, details }: CustomError) {
@@ -16,7 +16,7 @@ export function configureErrorHandler(error: FastifyError, reply: FastifyReply) 
         statusCode: 400,
         message: "Erro no envio da mensagem devido ao mau formato da requisição",
         code: "REQUEST_ERROR",
-        details: error.validation.at(0)?.message
+        details: error.validation?.map(validation => validation.message).filter(validation => validation !== undefined)
       }
     )
   } else {
