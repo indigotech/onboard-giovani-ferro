@@ -146,7 +146,7 @@ describe('GraphQL - Mutation createUser', () => {
 
     expect(response.data.errors[0]).to.be.deep.equal({
       message: "O Token não é válido ou está expirado",
-      extensions: { code: "INVALID_AUTHORIZATION", },
+      extensions: { code: "INVALID_AUTHENTICATION", },
       locations: [
         {
           column: 7,
@@ -172,7 +172,7 @@ describe('GraphQL - Mutation createUser', () => {
 
     expect(response.data.errors[0]).to.deep.equal({
       message: "O Token não é válido ou está expirado",
-      extensions: { code: "INVALID_AUTHORIZATION" },
+      extensions: { code: "INVALID_AUTHENTICATION" },
       locations: [
         {
           column: 7,
@@ -235,7 +235,7 @@ describe('GraphQL - Mutation createUser', () => {
       message: "Falha ao criar o usuário: email já existe",
       extensions: {
         code: "DUPLICATED_PARAMETER",
-        details: "Email must be unique"
+        details: "Email already exists in the database and must be unique"
       },
       locations: [
         {

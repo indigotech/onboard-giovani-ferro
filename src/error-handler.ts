@@ -1,24 +1,15 @@
 import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import { GraphQLError } from "graphql";
+import { CustomException } from "./exceptions/custom-exception";
 import { CustomError, ErrorResponse } from "./exceptions/exception.types";
 
-export function configureErrorHandler(error: FastifyError | CustomError, request: FastifyRequest, reply: FastifyReply) {
-  console.log(request.url)
+export function configureErrorHandler(error: FastifyError | CustomException, request: FastifyRequest, reply: FastifyReply) {
   if (request.url.startsWith('/graphql')) {
-    return;
+    return configureGraphqlErrorHandler(error)
   }
-  console.log(error)
 
-  if ('validation' in error) {
-    const response: ErrorResponse = {
-      message: "Erro no envio da mensagem devido ao mau formato da requisição",
-      code: "INVALID_PARAMETER",
-      details: error.validation?.at(0)?.message
-    };
-
-    reply.status(400).send(response);
-  } else {
-    const statusCode = error.statusCode ? error.statusCode : 500;
+  if (error instanceof CustomException) {
+    const statusCode = error.statusCode ?? 500;
 
     const response: ErrorResponse = {
       message: error.message ?? 'Erro interno do servidor',
@@ -39,6 +30,7 @@ export function configureErrorHandler(error: FastifyError | CustomError, request
 }
 
 export function configureGraphqlErrorHandler(error: FastifyError | CustomError) {
+  console.log(error)
   if (error && typeof error === 'object' && 'validation' in error) {
     return new GraphQLError(
       "Erro no envio da mensagem devido ao mau formato da requisição",

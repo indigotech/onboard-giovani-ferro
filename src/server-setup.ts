@@ -1,6 +1,6 @@
 import Fastify, { FastifyInstance } from "fastify";
 import { mercurius } from "mercurius";
-import { authenticate } from "./authenticate-middleware";
+import { AuthenticationMiddleware } from "./authenticate-middleware";
 import { authenticationHandler } from "./domain/authenticate";
 import { createUserHandler } from "./domain/create-user";
 import { findUserByIdHandler, findUsersHandler } from "./domain/find-users";
@@ -52,12 +52,10 @@ fastify.register(mercurius, {
   graphiql: true,
   context: async (request, reply) => {
     try {
-      await authenticate(request, reply);
+      await AuthenticationMiddleware.authenticate(request, reply);
       return { request };
     } catch (error) {
       const customError = error as CustomError;
-
-      console.log({ customError }, "context")
 
       return (
         {

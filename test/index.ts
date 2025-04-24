@@ -12,6 +12,7 @@ before(async () => {
 })
 
 import "./authentication-test";
+import "./graphql/users-get-test";
 import "./graphql/users-post-test";
 import "./users-get-test";
 import "./users-pagination-test";
