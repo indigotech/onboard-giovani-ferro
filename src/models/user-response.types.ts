@@ -1,10 +1,7 @@
 import { Address } from "../entities/user-entity.types";
+import { User } from "./auth-response.types";
 
-export interface UserResponse {
-    id: number;
-    name: string;
-    email: string;
-    birthDate: Date;
+export interface UserResponse extends User {
     addresses: UserAddress[]
 }
 
