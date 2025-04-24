@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { notAuthenticateException } from "../exceptions/not-authenticate-exception";
+import { NotAuthenticateException } from "../exceptions/not-authenticate-exception";
 import { AuthRequest } from "../models/auth-request.types";
 import { AuthResponse } from "../models/auth-response.types";
 import { getUserByEmail } from "../repository/db-repository";
@@ -17,7 +17,7 @@ export async function authenticationHandler(authCommand: AuthRequest): Promise<A
   const isValidPassword = await comparePassword(password, user.password);
 
   if (!isValidPassword) {
-    notAuthenticateException({ message: "Credenciais do usuário incorretas.", details: "Password is not valid." });
+    throw new NotAuthenticateException({ message: "Credenciais do usuário incorretas.", details: "Password is not valid." });
   }
 
   const token = jwt.sign(

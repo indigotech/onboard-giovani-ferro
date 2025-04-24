@@ -1,9 +1,18 @@
+import { CustomException } from "./custom-exception";
 import { ExceptionResponse } from "./exception.types";
 
-const statusCode = 400;
-const standardMessage = "Um ou mais parâmetros da requisição estão inválidos."
-const standardCode = "INVALID_PARAMETER";
+export class BadRequestEsception extends CustomException {
+  static readonly STATUS_CODE = 400;
+  static readonly DEFAULT_MESSAGE = "Um ou mais parâmetros da requisição estão inválidos.";
+  static readonly DEFAULT_CODE = "INVALID_PARAMETER";
 
-export function invalidParameterException({ message = standardMessage, code = standardCode, details }: ExceptionResponse): never {
-  throw ({ statusCode, message, code, details });
+  constructor(
+    {
+      message = BadRequestEsception.DEFAULT_MESSAGE,
+      code = BadRequestEsception.DEFAULT_CODE,
+      details
+    }: ExceptionResponse
+  ) {
+    super({ statusCode: BadRequestEsception.STATUS_CODE, message, code, details });
+  }
 }

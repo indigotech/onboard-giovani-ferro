@@ -1,9 +1,18 @@
+import { CustomException } from "./custom-exception";
 import { ExceptionResponse } from "./exception.types";
 
-const statusCode = 401;
-const standardMessage = "O cabeçalho de autorização está ausente ou é inválido"
-const standardCode = "INVALID_AUTHENTICATION";
+export class NotAuthenticateException extends CustomException {
+  static readonly STATUS_CODE = 401;
+  static readonly DEFAULT_MESSAGE = "O cabeçalho de autorização está ausente ou é inválido";
+  static readonly DEFAULT_CODE = "INVALID_AUTHENTICATION";
 
-export function notAuthenticateException({ message = standardMessage, code = standardCode, details }: ExceptionResponse): never {
-  throw ({ statusCode, message, code, details });
+  constructor(
+    {
+      message = NotAuthenticateException.DEFAULT_MESSAGE,
+      code = NotAuthenticateException.DEFAULT_CODE,
+      details
+    }: ExceptionResponse
+  ) {
+    super({ statusCode: NotAuthenticateException.STATUS_CODE, message, code, details });
+  }
 }

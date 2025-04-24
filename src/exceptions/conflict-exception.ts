@@ -1,9 +1,18 @@
+import { CustomException } from "./custom-exception";
 import { ExceptionResponse } from "./exception.types";
 
-const statusCode = 409;
-const standardMessage = "Não foi possível realizar a requisição devido a um conflito de parâmetros"
-const standardCode = "DUPLICATED_PARAMETER";
+export class ConflictException extends CustomException {
+  static readonly STATUS_CODE = 409;
+  static readonly DEFAULT_MESSAGE = "Não foi possível realizar a requisição devido a um conflito de parâmetros";
+  static readonly DEFAULT_CODE = "DUPLICATED_PARAMETER";
 
-export function conflictException({ message = standardMessage, code = standardCode, details }: ExceptionResponse): never {
-  throw ({ statusCode, message, code, details });
+  constructor(
+    {
+      message = ConflictException.DEFAULT_MESSAGE,
+      code = ConflictException.DEFAULT_CODE,
+      details
+    }: ExceptionResponse
+  ) {
+    super({ statusCode: ConflictException.STATUS_CODE, message, code, details });
+  }
 }
