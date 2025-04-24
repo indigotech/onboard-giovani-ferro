@@ -23,27 +23,3 @@ export function configureErrorHandler(error: FastifyError | CustomException, rep
     reply.status(400).send(response);
   }
 }
-
-export function errorHandlerSetup(error: FastifyError, reply: FastifyReply) {
-  if (error.validation) {
-    createError({
-      reply,
-      statusCode: 400,
-      message: "Erro no envio da mensagem devido ao mau formato da requisição",
-      code: "INVALID_PARAMETER",
-      details: error.validation?.at(0)?.message
-    };
-
-    reply.status(400).send(response);
-  } else {
-    const statusCode = error.statusCode ? error.statusCode : 500;
-
-    const response: ErrorResponse = {
-      message: error.message || 'Erro interno do servidor',
-      code: error.code ? error.code : 'UNEXPECTED_ERROR',
-      details: 'details' in error ? error.details : undefined
-    };
-
-    reply.status(statusCode).send(response);
-  }
-}

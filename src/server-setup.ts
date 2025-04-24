@@ -16,11 +16,6 @@ fastify.get("/users", async (_, reply) => {
   reply.status(200).send(userResponse);
 });
 
-fastify.post<{ Body: UserRequest }>("/users", createUserOptions, async (request, reply) => {
-  const { body } = request;
-  reply.status(200).send(userResponse);
-});
-
 fastify.get<{ Params: { id: number } }>("/users/:id", getUserByIdOptions, async (request, reply) => {
   const userResponse = await findUserByIdHandler(request.params.id);
 
