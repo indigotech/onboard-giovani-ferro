@@ -1,98 +1,41 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import Fastify, { FastifyInstance } from "fastify";
-import { AuthenticationMiddleware } from "./authenticate-middleware";
 import { authenticationHandler } from "./domain/authenticate";
 import { createUserHandler } from "./domain/create-user";
-import { findUsersHandler } from "./domain/find-users";
-import { configureErrorHandler, sendErrorResponse } from "./error-handler";
+import { findUserByIdHandler, findUsersHandler } from "./domain/find-users";
+import { configureErrorHandler } from "./error-handler";
 import { AuthRequest } from "./models/auth-request.types";
 import { UserRequest } from "./models/user-request.types";
-import { isStrongPassword } from "./shared/user-validation";
+import { authenticationOptions, createUserOptions, getUserByIdOptions } from "./schema";
 
 const fastify: FastifyInstance = Fastify({ logger: true });
 
 fastify.get("/users", async (_, reply) => {
-  try {
-    const userResponse = await findUsersHandler();
 
-    reply.status(200).send(userResponse);
+  const userResponse = await findUsersHandler();
 
-  } catch (error: unknown) {
-    const message = "Falha ao buscar o usuário. Tente novamente.";
-    const codeMessage = "UNEXPECTED_ERROR";
-
-    sendErrorResponse({ reply, statusCode: 500, message, code: codeMessage })
-  }
+  reply.status(200).send(userResponse);
 });
 
-fastify.post<{ Body: UserRequest }>("/users", {
-  schema: {
-    body: {
-      type: 'object',
-      properties: {
-        name: { type: 'string' },
-        email: { type: 'string', format: 'email' },
-        password: { type: 'string' },
-        birthDate: { type: 'string', format: 'date' }
-      }
-    }
-  },
-  preHandler: [AuthenticationMiddleware.authenticate]
-}, async (request, reply) => {
-  try {
-    const { body } = request;
+fastify.get<{ Params: { id: number } }>("/users/:id", getUserByIdOptions, async (request, reply) => {
+  const userResponse = await findUserByIdHandler(request.params.id);
 
-    if (!isStrongPassword(body.password)) {
-      const message = "A senha deve ter pelo menos 6 caracteres e conter pelo menos 1 letra e 1 dígito"
-      const code = "WEAK_PASSWORD"
-      return sendErrorResponse({ reply, statusCode: 400, message, code });
-    }
-
-    const userResponse = await createUserHandler(body)
-
-    reply.status(201).send(userResponse);
-  } catch (error: unknown) {
-    const { code } = error as PrismaClientKnownRequestError
-
-    if (code === 'P2002') {
-      const message = "Falha ao criar o usuário: email já existe";
-      const codeMessage = "DUPLICATE_EMAIL";
-      const details = "Email already exists in the database and must be unique";
-      return sendErrorResponse({ reply, statusCode: 409, message, code: codeMessage, details });
-    }
-
-    const message = "Falha ao buscar o usuário. Tente novamente.";
-    const codeMessage = "UNEXPECTED_ERROR";
-
-    sendErrorResponse({ reply, statusCode: 500, message, code: codeMessage })
-  }
+  reply.status(200).send(userResponse);
 });
 
-fastify.post<{ Body: AuthRequest }>("/auth", {
-  schema: {
-    body: {
-      type: 'object',
-      properties: {
-        email: { type: 'string', format: 'email' },
-        password: { type: 'string' },
-        rememberMe: { type: 'boolean' },
-      }
-    }
-  }
-}, async (request, reply) => {
-  try {
-    const { body } = request;
+fastify.post<{ Body: UserRequest }>("/users", createUserOptions, async (request, reply) => {
+  const { body } = request;
 
-    const userResponse = await authenticationHandler(body);
+  const userResponse = await createUserHandler(body)
 
-    reply.status(201).send(userResponse);
-  } catch (error: unknown) {
-    const message = "Credenciais Inválidas";
-    const codeMessage = "INVALID_AUTHENTICATION";
-    const details = "Email e/ou Senha do usuário está incorreto";
+  reply.status(201).send(userResponse);
+});
 
-    sendErrorResponse({ reply, statusCode: 401, message, code: codeMessage, details })
-  }
+fastify.post<{ Body: AuthRequest }>("/auth", authenticationOptions, async (request, reply) => {
+  const { body } = request;
+
+  const userResponse = await authenticationHandler(body);
+
+  reply.status(201).send(userResponse);
 });
 
 fastify.setErrorHandler((error, request, reply) => configureErrorHandler(error, reply));

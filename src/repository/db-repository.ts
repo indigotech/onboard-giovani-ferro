@@ -1,5 +1,9 @@
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { prisma } from "../client/client";
 import { UserEntity } from "../entities/user-entity.types";
+import { ConflictException } from "../exceptions/conflict-exception";
+import { UserNotFoundException } from "../exceptions/not-found-exceptions";
+import { InternalServerException } from "../exceptions/server-exception";
 import { UserRequest } from "../models/user-request.types";
 
 export async function getUsers(): Promise<UserEntity[]> {
@@ -12,26 +16,28 @@ export async function getUsers(): Promise<UserEntity[]> {
 
     return users
   } catch (error) {
-
-    console.error("Error getting user:", error);
-    throw error;
+    throw new InternalServerException({ details: "Error when trying to find users from DB" });
   }
 }
 
 export async function getUserByEmail(email: string): Promise<UserEntity> {
-  try {
-    const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({ where: { email } });
 
-    if (!user) {
-      throw new Error("Usuário não encontrado");
-    }
-
-    return user
-  } catch (error) {
-
-    console.error("Error getting user:", error);
-    throw error;
+  if (!user) {
+    throw new UserNotFoundException({});
   }
+
+  return user
+}
+
+export async function getUserById(id: number): Promise<UserEntity> {
+  const user = await prisma.user.findUnique({ where: { id } });
+
+  if (!user) {
+    throw new UserNotFoundException({});
+  }
+
+  return user
 }
 
 export async function createUser(userRequest: UserRequest): Promise<UserEntity> {
@@ -45,13 +51,17 @@ export async function createUser(userRequest: UserRequest): Promise<UserEntity> 
       }
     })
 
-    if (!user) {
-      throw new Error("Não foi possível criar o usuário");
-    }
-
     return user;
   } catch (error) {
-    console.error("Error creating user:", error);
-    throw error;
+    const { code } = error as PrismaClientKnownRequestError
+
+    if (code === 'P2002') {
+      const message = "Falha ao criar o usuário: email já existe";
+      const details = "Email already exists in the database and must be unique";
+      throw new ConflictException({ message, details });
+    }
+
+    throw new InternalServerException({ details: "Error when trying to create user into DB" });
   }
 }
+
