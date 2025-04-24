@@ -4,7 +4,7 @@ export interface UserEntity {
   email: string;
   password: string;
   birthDate: Date;
-  address: Address[];
+  addresses: Address[];
 }
 
 export interface Address {
@@ -12,7 +12,7 @@ export interface Address {
   cep: string,
   street: string,
   streetNumber: string,
-  complement?: string,
+  complement: string | null,
   neighborhood: string,
   city: string,
   state: string,

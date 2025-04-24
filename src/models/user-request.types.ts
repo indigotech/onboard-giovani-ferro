@@ -6,7 +6,6 @@ export interface UserRequest {
     birthDate: string;
 }
 
-
 export interface PaginatedRequest {
     page: number;
     pageSize: number;

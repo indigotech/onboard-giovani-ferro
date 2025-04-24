@@ -172,7 +172,6 @@ describe('POST /users - Create User', async () => {
       },
       validateStatus: () => true
     });
-
     expect(response.status).to.be.equal(409);
     expect(response.data).to.be.deep.equal({
       message: "Falha ao criar o usuário: email já existe",
