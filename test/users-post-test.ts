@@ -178,6 +178,5 @@ describe('POST /users - Create User', async () => {
       code: "DUPLICATED_PARAMETER",
       details: "Email already exists in the database and must be unique"
     });
-
   });
 });
