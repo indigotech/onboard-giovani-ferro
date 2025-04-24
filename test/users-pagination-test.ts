@@ -17,7 +17,7 @@ describe('GET /users - Paginated Users', async () => {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    expect(response.status).to.equal(200);
+    expect(response.status).to.be.equal(200);
     expect(response.data).to.have.all.keys(['users', 'pagination']);
     expect(response.data).to.be.deep.equals({
       users: users,
@@ -41,9 +41,6 @@ describe('GET /users - Paginated Users', async () => {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    console.log(response.data)
-
-
     expect(response.data).to.be.deep.equals({
       users: users,
       pagination: {
@@ -52,7 +49,7 @@ describe('GET /users - Paginated Users', async () => {
         hasPrevious: true,
       }
     });
-    expect(response.data.users.length).to.equal(10);
+    expect(response.data.users.length).to.be.equal(10);
   });
 
   it("Should return correct pagination info for last page", async () => {
@@ -77,15 +74,15 @@ describe('GET /users - Paginated Users', async () => {
         hasPrevious: true,
       }
     });
-    expect(response.data.users.length).to.equal(5);
+    expect(response.data.users.length).to.be.equal(5);
   });
 
   it("Should return an error if the Authorization header is missing", async () => {
     const response = await axios.get(`http://localhost:${port}/users`, {
       validateStatus: () => true
     });
-    expect(response.status).to.equal(401);
-    expect(response.data).to.deep.equal({
+    expect(response.status).to.be.equal(401);
+    expect(response.data).to.be.deep.equal({
       message: "O cabeçalho de autorização está ausente ou é inválido",
       code: "INVALID_AUTHENTICATION",
       details: "The token does not exists or has invalid format.",
@@ -101,9 +98,9 @@ describe('GET /users - Paginated Users', async () => {
       },
       validateStatus: () => true
     });
-    expect(response.status).to.equal(403);
-    expect(response.data).to.deep.equal({
-      code: "INVALID_AUTHORIZATION",
+    expect(response.status).to.be.equal(401);
+    expect(response.data).to.be.deep.equal({
+      code: "INVALID_AUTHENTICATION",
       message: "O Token não é válido ou está expirado",
     });
   });

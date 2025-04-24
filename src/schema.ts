@@ -24,7 +24,7 @@ export const getUserOptions = {
       },
     },
   },
-  preHandler: [authenticate]
+  preHandler: [AuthenticationMiddleware.authenticate]
 }
 
 export const createUserOptions = {

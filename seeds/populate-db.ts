@@ -6,7 +6,6 @@ export async function seed() {
   await prisma.user.createMany({ data: users, skipDuplicates: true });
 }
 
-
 function createTestUsers(count: number) {
   const users: any = []
   for (let i = 0; i < count; i++) {

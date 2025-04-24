@@ -27,11 +27,11 @@ describe("POST /auth", () => {
       password: mockUser.password,
     });
 
-    expect(response.status).to.equal(201);
+    expect(response.status).to.be.equal(201);
 
     const { user, token } = response.data;
 
-    expect(user).to.deep.equal({
+    expect(user).to.be.deep.equal({
       id: user.id,
       name: mockUser.name,
       email: mockUser.email,
@@ -64,7 +64,7 @@ describe("POST /auth", () => {
       rememberMe: true,
     });
 
-    expect(response.status).to.equal(201);
+    expect(response.status).to.be.equal(201);
     const { token } = response.data;
 
     const decodedToken: any = jwt.verify(token, JWT_SECRET);
@@ -77,11 +77,11 @@ describe("POST /auth", () => {
       email: "nonexistent@example.com", password: "Password123"
     }, { validateStatus: () => true });
 
-    expect(response.status).to.equal(404);
+    expect(response.status).to.be.equal(404);
     expect(response.data).to.have.property("message");
     expect(response.data).to.have.property("code");
 
-    expect(response.data).to.deep.equal({
+    expect(response.data).to.be.deep.equal({
       message: "O usuário não foi encontrado no sistema",
       code: "USER_NOT_FOUND",
     });
@@ -104,11 +104,11 @@ describe("POST /auth", () => {
       email: mockUser.email, password: "Password321"
     }, { validateStatus: () => true });
 
-    expect(response.status).to.equal(401);
+    expect(response.status).to.be.equal(401);
     expect(response.data).to.have.property("message");
     expect(response.data).to.have.property("code");
     expect(response.data).to.have.property("details");
-    expect(response.data).to.deep.equal({
+    expect(response.data).to.be.deep.equal({
       message: "Credenciais do usuário incorretas.",
       code: "INVALID_AUTHENTICATION",
       details: "Password is not valid."
