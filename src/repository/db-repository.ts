@@ -54,7 +54,7 @@ export async function getUsers(request: PaginatedRequest): Promise<PaginatedResp
 }
 
 export async function getUserByEmail(email: string): Promise<UserEntity> {
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({ where: { email }, include: { addresses: true } });
 
   if (!user) {
     throw new UserNotFoundException({});
@@ -64,7 +64,7 @@ export async function getUserByEmail(email: string): Promise<UserEntity> {
 }
 
 export async function getUserById(id: number): Promise<UserEntity> {
-  const user = await prisma.user.findUnique({ where: { id } });
+  const user = await prisma.user.findUnique({ where: { id }, include: { addresses: true } });
 
   if (!user) {
     throw new UserNotFoundException({});
@@ -81,7 +81,7 @@ export async function createUser(userRequest: UserRequest): Promise<UserEntity> 
         email: userRequest.email,
         password: userRequest.password,
         birthDate: new Date(userRequest.birthDate),
-      }
+      }, include: { addresses: true }
     })
 
     return user;

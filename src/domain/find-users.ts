@@ -16,3 +16,4 @@ export async function findUserByIdHandler(id: number): Promise<UserResponse> {
 
   return userResponse;
 }
+
