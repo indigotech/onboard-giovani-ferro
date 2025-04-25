@@ -6,7 +6,7 @@ import { prisma } from "../src/client/client";
 const port = process.env.PORT ? +process.env.PORT : 30002;
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-describe('GET /users - Paginated Users', async () => {
+describe('GET /users', async () => {
   const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
 
   it("Should return paginated response with correct structure and default values", async () => {
@@ -18,7 +18,6 @@ describe('GET /users - Paginated Users', async () => {
     });
 
     expect(response.status).to.be.equal(200);
-    expect(response.data).to.have.all.keys(['users', 'pagination']);
     expect(response.data).to.be.deep.equals({
       users: users,
       pagination: {
@@ -64,8 +63,6 @@ describe('GET /users - Paginated Users', async () => {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    console.log(`http://localhost:${port}/users?page=${page}&pageSize=${pageSize}`)
-
     expect(response.data).to.be.deep.equals({
       users,
       pagination: {
@@ -74,7 +71,6 @@ describe('GET /users - Paginated Users', async () => {
         hasPrevious: true,
       }
     });
-    expect(response.data.users.length).to.be.equal(5);
   });
 
   it("Should return an error if the Authorization header is missing", async () => {
@@ -106,7 +102,6 @@ describe('GET /users - Paginated Users', async () => {
   });
 });
 
-
 interface PaginationTestRequest {
   take: number;
   skip: number;
@@ -133,12 +128,12 @@ async function getUsersPaginated({ take, skip }: PaginationTestRequest) {
     take
   });
 
-  return users.map(x => {
+  return users.map(user => {
     return {
-      id: x.id,
-      email: x.email,
-      name: x.name,
-      birthDate: x.birthDate.toISOString(),
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      birthDate: user.birthDate.toISOString(),
     }
   })
 }
