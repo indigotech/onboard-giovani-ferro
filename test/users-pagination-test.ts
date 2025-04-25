@@ -107,11 +107,35 @@ interface PaginationTestRequest {
 }
 
 async function addUsersToDB(count: number) {
-  const users = createTestUsers(count);
-  await prisma.user.createMany({
-    data: users,
-    skipDuplicates: true
-  });
+  let data;
+  for (let i = 0; i < count; i++) {
+    data = {
+      name: `user${String.fromCharCode(65 + i)}`,
+      email: `user${i}@example.com`,
+      password: `user${i}Password123`,
+      birthDate: new Date("2000-01-01"),
+      addresses: {
+        create: [{
+          cep: "01001-000",
+          street: "Praça da Sé",
+          streetNumber: String(i + 1),
+          neighborhood: "Sé",
+          city: "São Paulo",
+          state: "SP",
+          complement: `Apto ${i + 1}`
+        },
+        {
+          cep: "20031-170",
+          street: "Avenida Rio Branco",
+          streetNumber: String(i + 1),
+          neighborhood: "Centro",
+          city: "Rio de Janeiro",
+          state: "RJ"
+        }]
+      }
+    };
+    await prisma.user.create({ data, include: { addresses: true } });
+  }
 }
 
 async function getUsersPaginated({ take, skip }: PaginationTestRequest) {
@@ -120,7 +144,8 @@ async function getUsersPaginated({ take, skip }: PaginationTestRequest) {
       birthDate: true,
       email: true,
       id: true,
-      name: true
+      name: true,
+      addresses: true
     },
     orderBy: { name: "asc" },
     skip,
@@ -133,19 +158,7 @@ async function getUsersPaginated({ take, skip }: PaginationTestRequest) {
       email: user.email,
       name: user.name,
       birthDate: user.birthDate.toISOString(),
+      addresses: user.addresses
     }
   })
-}
-
-function createTestUsers(count: number) {
-  const users: any = []
-  for (let i = 0; i < count; i++) {
-    users.push({
-      name: `user${String.fromCharCode(65 + i)}`,
-      email: `user${i}@example.com`,
-      password: `user${i}Password123`,
-      birthDate: new Date("2000-01-01"),
-    });
-  }
-  return users
 }

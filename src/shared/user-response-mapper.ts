@@ -7,6 +7,7 @@ export function userResponseMapper(user: UserEntity) {
     name: user.name,
     email: user.email,
     birthDate: user.birthDate,
+    addresses: user.addresses
   }
 
   return userResponse;

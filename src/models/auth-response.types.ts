@@ -1,8 +1,12 @@
-import { UserResponse } from "./user-response.types";
 
 export interface AuthResponse {
   user: User;
   token: string;
 }
 
-type User = UserResponse;
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  birthDate: Date;
+};

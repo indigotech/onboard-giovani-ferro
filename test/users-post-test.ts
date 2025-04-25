@@ -9,20 +9,33 @@ const port = process.env.PORT ? +process.env.PORT : 30002;
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 describe('POST /users - Create User', async () => {
-  it('should create new user', async () => {
-    const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
-
-    const mockUser: UserRequest = {
-      name: "testuser",
-      email: "testuser@example.com",
-      password: "Password123",
-      birthDate: "2000-01-01",
+  const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
+  const mockAddresses = [
+    {
+      cep: "12345-678",
+      street: "Test Street",
+      streetNumber: "123",
+      neighborhood: "Test Neighborhood",
+      city: "Test City",
+      state: "SP",
+      complement: null
     }
+  ]
 
-    const response = await axios.post<UserResponse>(`http://localhost:${port}/users`, mockUser, {
+  const mockUser: UserRequest = {
+    name: "testuser",
+    email: "mockuser@example.com",
+    password: "password123",
+    birthDate: "2000-01-01",
+    addresses: []
+  }
+
+  it('Should create new user', async () => {
+    const response = await axios.post<UserResponse>(`http://localhost:${port}/users`, { ...mockUser, addresses: mockAddresses }, {
       headers: {
         Authorization: `Bearer ${token}`
-      }
+      },
+      validateStatus: () => true
     });
 
     expect(response.status).to.be.equal(201);
@@ -30,14 +43,26 @@ describe('POST /users - Create User', async () => {
     const expectedResponse = {
       id: response.data.id,
       name: "testuser",
-      email: "testuser@example.com",
+      email: "mockuser@example.com",
       birthDate: "2000-01-01T00:00:00.000Z",
+      addresses: [{
+        id: response.data.addresses[0].id,
+        userId: response.data.addresses[0].userId,
+        cep: "12345-678",
+        street: "Test Street",
+        streetNumber: "123",
+        neighborhood: "Test Neighborhood",
+        city: "Test City",
+        state: "SP",
+        complement: null
+      }]
     };
 
     expect(response.data).to.be.deep.eq(expectedResponse);
 
     const userInDb = await prisma.user.findUnique({
       where: { id: response.data.id },
+      include: { addresses: true }
     });
 
     expect(userInDb).to.not.be.null;
@@ -47,19 +72,13 @@ describe('POST /users - Create User', async () => {
       name: userInDb?.name,
       email: userInDb?.email,
       birthDate: userInDb?.birthDate.toISOString(),
+      addresses: userInDb?.addresses
     }
 
     expect(response.data).to.be.deep.eq(userFromDb);
   });
 
   it("Should return an error if the Authorization header is missing", async () => {
-    const mockUser = {
-      username: "testuser",
-      email: "testuser@example.com",
-      password: "Password123",
-      birthDate: "2000-01-01",
-    };
-
     const response = await axios.post(`http://localhost:${port}/users`, mockUser, { validateStatus: () => true });
 
     expect(response.status).to.be.equal(401);
@@ -72,13 +91,6 @@ describe('POST /users - Create User', async () => {
   })
 
   it("Should return an error if the token is invalid", async () => {
-    const mockUser = {
-      username: "testuser",
-      email: "testuser@example.com",
-      password: "Password123",
-      birthDate: "2000-01-01",
-    };
-
     const invalidToken = "invalid.token.here";
 
     const response = await axios.post(
@@ -103,13 +115,6 @@ describe('POST /users - Create User', async () => {
   it("Should return an error if the token is expired", async () => {
     const expiredToken = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "-1s" });
 
-    const mockUser = {
-      username: "testuser",
-      email: "testuser@example.com",
-      password: "Password123",
-      birthDate: "2000-01-01",
-    };
-
     const response = await axios.post(
       `http://localhost:${port}/users`,
       mockUser,
@@ -130,17 +135,8 @@ describe('POST /users - Create User', async () => {
     });
   });
 
-  it('should throw password validation', async () => {
-    const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
-
-    const mockUser: UserRequest = {
-      name: "testuser",
-      email: "mockuser@example.com",
-      password: "password",
-      birthDate: "2000-01-01",
-    }
-
-    const response = await axios.post(`http://localhost:${port}/users`, mockUser, {
+  it('Should throw password validation', async () => {
+    const response = await axios.post(`http://localhost:${port}/users`, { ...mockUser, password: "123456" }, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -154,17 +150,8 @@ describe('POST /users - Create User', async () => {
     });
   });
 
-  it('should throw email validation', async () => {
-    const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
-
-    const mockUser: UserRequest = {
-      name: "testuser",
-      email: "testuser@example.com",
-      password: "Password123",
-      birthDate: "2000-01-01",
-    }
-
-    await prisma.user.create({ data: { ...mockUser, birthDate: new Date(mockUser.birthDate) } })
+  it('Should throw email validation', async () => {
+    await prisma.user.create({ data: { ...mockUser, birthDate: new Date(mockUser.birthDate), addresses: { create: mockAddresses } }, include: { addresses: true } })
 
     const response = await axios.post(`http://localhost:${port}/users`, mockUser, {
       headers: {

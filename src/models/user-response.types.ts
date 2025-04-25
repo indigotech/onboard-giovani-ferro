@@ -1,10 +1,11 @@
-export interface UserResponse {
-    id: number;
-    name: string;
-    email: string;
-    birthDate: Date;
+import { Address } from "../entities/user-entity.types";
+import { User } from "./auth-response.types";
+
+export interface UserResponse extends User {
+    addresses: UserAddress[]
 }
 
+type UserAddress = Address;
 
 export interface PaginatedResponse {
     users: UserResponse[],

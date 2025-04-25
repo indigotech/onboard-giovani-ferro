@@ -31,7 +31,7 @@ export async function authenticationHandler(authCommand: AuthRequest): Promise<A
       id: user.id,
       name: user.name,
       birthDate: user.birthDate,
-      email: user.email
+      email: user.email,
     },
     token: token
   }
