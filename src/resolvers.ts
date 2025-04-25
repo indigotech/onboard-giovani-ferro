@@ -48,9 +48,6 @@ export const resolvers = {
         return user;
       } catch (error) {
         const customError = error as CustomError;
-
-        console.log({ customError })
-
         throw new GraphQLError(customError.message || 'Erro interno do servidor',
           {
             extensions: {
