@@ -10,46 +10,28 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 
 describe('POST /users - Create User', async () => {
   const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
+  const mockAddresses = [
+    {
+      cep: "12345-678",
+      street: "Test Street",
+      streetNumber: "123",
+      neighborhood: "Test Neighborhood",
+      city: "Test City",
+      state: "SP",
+      complement: null
+    }
+  ]
+
   const mockUser: UserRequest = {
     name: "testuser",
     email: "mockuser@example.com",
     password: "password123",
     birthDate: "2000-01-01",
-    addresses: [
-      {
-        cep: "12345-678",
-        street: "Test Street",
-        streetNumber: "123",
-        neighborhood: "Test Neighborhood",
-        city: "Test City",
-        state: "SP",
-        complement: null
-      }
-    ]
-  }
-
-  const mockUserData = {
-    name: "testuser",
-    email: "mockuser@example.com",
-    password: "password123",
-    birthDate: "2000-01-01",
-    addresses: {
-      create: [
-        {
-          cep: "12345-678",
-          street: "Test Street",
-          streetNumber: "123",
-          neighborhood: "Test Neighborhood",
-          city: "Test City",
-          state: "SP",
-          complement: null
-        }
-      ]
-    }
+    addresses: []
   }
 
   it('Should create new user', async () => {
-    const response = await axios.post<UserResponse>(`http://localhost:${port}/users`, mockUser, {
+    const response = await axios.post<UserResponse>(`http://localhost:${port}/users`, { ...mockUser, addresses: mockAddresses }, {
       headers: {
         Authorization: `Bearer ${token}`
       },
@@ -169,7 +151,7 @@ describe('POST /users - Create User', async () => {
   });
 
   it('Should throw email validation', async () => {
-    await prisma.user.create({ data: { ...mockUserData, birthDate: new Date(mockUser.birthDate) }, include: { addresses: true } })
+    await prisma.user.create({ data: { ...mockUser, birthDate: new Date(mockUser.birthDate), addresses: { create: mockAddresses } }, include: { addresses: true } })
 
     const response = await axios.post(`http://localhost:${port}/users`, mockUser, {
       headers: {

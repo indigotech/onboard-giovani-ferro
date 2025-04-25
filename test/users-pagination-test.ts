@@ -158,6 +158,7 @@ async function getUsersPaginated({ take, skip }: PaginationTestRequest) {
       email: user.email,
       name: user.name,
       birthDate: user.birthDate.toISOString(),
+      addresses: user.addresses
     }
   })
 }

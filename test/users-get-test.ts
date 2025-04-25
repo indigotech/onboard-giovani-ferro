@@ -9,46 +9,29 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 
 describe("GET /users/:id", () => {
   const token = jwt.sign({ id: "123" }, JWT_SECRET, { expiresIn: "1h" });
+  const mockAddresses = [
+    {
+      cep: "12345-678",
+      street: "Test Street",
+      streetNumber: "123",
+      neighborhood: "Test Neighborhood",
+      city: "Test City",
+      state: "SP",
+      complement: null
+    }
+  ]
+
   const mockUser: UserRequest = {
     name: "testuser",
     email: "mockuser@example.com",
-    password: "password",
+    password: "password123",
     birthDate: "2000-01-01",
-    addresses: [
-      {
-        cep: "12345-678",
-        street: "Test Street",
-        streetNumber: "123",
-        neighborhood: "Test Neighborhood",
-        city: "Test City",
-        state: "SP",
-        complement: null
-      }
-    ]
+    addresses: []
   }
 
-  const mockUserData = {
-    name: "testuser",
-    email: "mockuser@example.com",
-    password: "password",
-    birthDate: "2000-01-01",
-    addresses: {
-      create: [
-        {
-          cep: "12345-678",
-          street: "Test Street",
-          streetNumber: "123",
-          neighborhood: "Test Neighborhood",
-          city: "Test City",
-          state: "SP",
-          complement: null
-        }
-      ]
-    }
-  }
 
   it("Should return user information for a valid id and token", async () => {
-    const user = await prisma.user.create({ data: { ...mockUserData, birthDate: new Date(mockUser.birthDate) }, include: { addresses: true } })
+    const user = await prisma.user.create({ data: { ...mockUser, birthDate: new Date(mockUser.birthDate), addresses: { create: mockAddresses } }, include: { addresses: true } })
 
     const response = await axios.get(`http://localhost:${port}/users/${user.id}`, {
       headers: {
