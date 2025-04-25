@@ -1,4 +1,3 @@
-
 import { GraphQLError } from 'graphql';
 import { createUserHandler } from './domain/create-user';
 import { findUserByIdHandler } from './domain/find-users';
