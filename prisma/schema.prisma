@@ -14,4 +14,18 @@ model User {
   email       String    @unique @db.VarChar(100)
   password    String    @db.VarChar(255)
   birthDate   DateTime
+  addresses   Address[]
+}
+
+model Address {
+  id           Int     @id @default(autoincrement())
+  cep          String
+  street       String
+  streetNumber String
+  complement   String?
+  neighborhood String
+  city         String
+  state        String
+  user         User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId       Int
 }

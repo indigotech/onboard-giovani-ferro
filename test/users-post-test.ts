@@ -25,7 +25,7 @@ describe('POST /users - Create User', async () => {
       }
     });
 
-    expect(response.status).to.equal(201);
+    expect(response.status).to.be.equal(201);
 
     const expectedResponse = {
       id: response.data.id,
@@ -62,9 +62,9 @@ describe('POST /users - Create User', async () => {
 
     const response = await axios.post(`http://localhost:${port}/users`, mockUser, { validateStatus: () => true });
 
-    expect(response.status).to.equal(401);
+    expect(response.status).to.be.equal(401);
 
-    expect(response.data).to.deep.equal({
+    expect(response.data).to.be.deep.equal({
       message: "O cabeçalho de autorização está ausente ou é inválido",
       code: "INVALID_AUTHENTICATION",
       details: "The token does not exists or has invalid format.",
@@ -92,9 +92,9 @@ describe('POST /users - Create User', async () => {
       }
     );
 
-    expect(response.status).to.equal(401);
+    expect(response.status).to.be.equal(401);
 
-    expect(response.data).to.deep.equal({
+    expect(response.data).to.be.deep.equal({
       message: "O Token não é válido ou está expirado",
       code: "INVALID_AUTHENTICATION",
     });
@@ -121,10 +121,10 @@ describe('POST /users - Create User', async () => {
       }
     );
 
-    expect(response.status).to.equal(401);
+    expect(response.status).to.be.equal(401);
     expect(response.data).to.have.property("message");
     expect(response.data).to.have.property("code");
-    expect(response.data).to.deep.equal({
+    expect(response.data).to.be.deep.equal({
       message: "O Token não é válido ou está expirado",
       code: "INVALID_AUTHENTICATION"
     });
@@ -147,8 +147,8 @@ describe('POST /users - Create User', async () => {
       validateStatus: () => true
     });
 
-    expect(response.status).to.equal(400);
-    expect(response.data).to.deep.equal({
+    expect(response.status).to.be.equal(400);
+    expect(response.data).to.be.deep.equal({
       message: "A senha deve ter pelo menos 6 caracteres e conter pelo menos 1 letra e 1 dígito",
       code: "WEAK_PASSWORD",
     });
@@ -172,8 +172,8 @@ describe('POST /users - Create User', async () => {
       },
       validateStatus: () => true
     });
-    expect(response.status).to.equal(409);
-    expect(response.data).to.deep.equal({
+    expect(response.status).to.be.equal(409);
+    expect(response.data).to.be.deep.equal({
       message: "Falha ao criar o usuário: email já existe",
       code: "DUPLICATED_PARAMETER",
       details: "Email already exists in the database and must be unique"

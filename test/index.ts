@@ -13,6 +13,7 @@ before(async () => {
 
 import "./authentication-test";
 import "./users-get-test";
+import "./users-pagination-test";
 import "./users-post-test";
 
 afterEach(async () => {

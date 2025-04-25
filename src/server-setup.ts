@@ -4,14 +4,13 @@ import { createUserHandler } from "./domain/create-user";
 import { findUserByIdHandler, findUsersHandler } from "./domain/find-users";
 import { configureErrorHandler } from "./error-handler";
 import { AuthRequest } from "./models/auth-request.types";
-import { UserRequest } from "./models/user-request.types";
-import { authenticationOptions, createUserOptions, getUserByIdOptions } from "./schema";
+import { PaginatedRequest, UserRequest } from "./models/user-request.types";
+import { authenticationOptions, createUserOptions, getUserByIdOptions, getUserOptions } from "./schema";
 
 const fastify: FastifyInstance = Fastify({ logger: true });
 
-fastify.get("/users", async (_, reply) => {
-
-  const userResponse = await findUsersHandler();
+fastify.get<{ Querystring: PaginatedRequest }>("/users", getUserOptions, async (request, reply) => {
+  const userResponse = await findUsersHandler(request.query);
 
   reply.status(200).send(userResponse);
 });

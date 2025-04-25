@@ -1,7 +1,6 @@
 import { CustomException } from "./custom-exception";
 import { ExceptionResponse } from "./exception.types";
 
-
 export class InternalServerException extends CustomException {
   static readonly STATUS_CODE = 500;
   static readonly DEFAULT_MESSAGE = "Houve um erro na conexão com o servidor.";

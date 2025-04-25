@@ -7,16 +7,6 @@ import { UserRequest } from "../src/models/user-request.types";
 const port = process.env.PORT ? +process.env.PORT : 30002;
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-describe('GET /users', async () => {
-  it('should find all users', async () => {
-    const response = await axios.get(`http://localhost:${port}/users`);
-
-    expect(response.status).to.equal(200);
-
-    expect(response.data).to.be.an("array");
-  });
-});
-
 describe("GET /users/:id", () => {
   it("Should return user information for a valid id and token", async () => {
     const mockUser: UserRequest = {
@@ -36,8 +26,8 @@ describe("GET /users/:id", () => {
       },
     });
 
-    expect(response.status).to.equal(200);
-    expect(response.data).to.deep.equal({
+    expect(response.status).to.be.equal(200);
+    expect(response.data).to.be.deep.equal({
       id: user.id,
       name: user.name,
       email: user.email,
@@ -54,8 +44,8 @@ describe("GET /users/:id", () => {
       },
       validateStatus: () => true
     });
-    expect(response.status).to.equal(404);
-    expect(response.data).to.deep.equal({
+    expect(response.status).to.be.equal(404);
+    expect(response.data).to.be.deep.equal({
       code: "USER_NOT_FOUND",
       message: "O usuário não foi encontrado no sistema",
     });
@@ -68,8 +58,8 @@ describe("GET /users/:id", () => {
     const response = await axios.get(`http://localhost:${port}/users/9999`, {
       validateStatus: () => true
     });
-    expect(response.status).to.equal(401);
-    expect(response.data).to.deep.equal({
+    expect(response.status).to.be.equal(401);
+    expect(response.data).to.be.deep.equal({
       message: "O cabeçalho de autorização está ausente ou é inválido",
       code: "INVALID_AUTHENTICATION",
       details: "The token does not exists or has invalid format.",
@@ -85,8 +75,8 @@ describe("GET /users/:id", () => {
       },
       validateStatus: () => true
     });
-    expect(response.status).to.equal(401);
-    expect(response.data).to.deep.equal({
+    expect(response.status).to.be.equal(401);
+    expect(response.data).to.be.deep.equal({
       code: "INVALID_AUTHENTICATION",
       message: "O Token não é válido ou está expirado",
     });
@@ -101,8 +91,8 @@ describe("GET /users/:id", () => {
       },
       validateStatus: () => true
     });
-    expect(response.status).to.equal(404);
-    expect(response.data).to.deep.equal({
+    expect(response.status).to.be.equal(404);
+    expect(response.data).to.be.deep.equal({
       code: "USER_NOT_FOUND",
       message: "O usuário não foi encontrado no sistema",
     });
@@ -117,8 +107,8 @@ describe("GET /users/:id", () => {
       },
       validateStatus: () => true
     });
-    expect(response.status).to.equal(404);
-    expect(response.data).to.deep.equal({
+    expect(response.status).to.be.equal(404);
+    expect(response.data).to.be.deep.equal({
       code: "USER_NOT_FOUND",
       message: "O usuário não foi encontrado no sistema",
     });
