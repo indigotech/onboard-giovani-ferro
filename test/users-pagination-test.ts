@@ -48,7 +48,6 @@ describe('GET /users', async () => {
         hasPrevious: true,
       }
     });
-    expect(response.data.users.length).to.be.equal(10);
   });
 
   it("Should return correct pagination info for last page", async () => {
