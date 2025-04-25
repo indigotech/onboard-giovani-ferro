@@ -37,7 +37,7 @@ export const typeDefs = `
   }
 
   type Query {
-    user(id: Int!): User
+    user(id: Int!): User!
   }
 
   type Mutation {

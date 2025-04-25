@@ -11,7 +11,6 @@ export const resolvers = {
       try {
         const userResponse = await findUserByIdHandler(id);
 
-        console.log(context.error)
         if (context.error) {
           throw ({
             message: context.error.message,

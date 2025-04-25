@@ -60,10 +60,10 @@ fastify.register(mercurius, {
       return (
         {
           error: {
-            message: customError.message || 'Erro interno do servidor',
+            message: customError.message ?? 'Erro interno do servidor',
             extensions: {
-              code: customError.code || 'UNEXPECTED_ERROR',
-              details: 'details' in customError ? customError.details : undefined
+              code: customError.code ?? 'UNEXPECTED_ERROR',
+              details: customError.details
             }
           }
         }

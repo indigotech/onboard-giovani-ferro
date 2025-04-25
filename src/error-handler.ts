@@ -1,7 +1,10 @@
 import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import { GraphQLError } from "graphql";
 import { CustomException } from "./exceptions/custom-exception";
-import { CustomError, ErrorResponse } from "./exceptions/exception.types";
+import { ErrorResponse } from "./exceptions/exception.types";
+
+const DEFAULT_MESSAGE = "Informações enviadas estão incompletas ou incorretas. Por favor, verifique os dados e tente novamente.";
+const DEFAULT_CODE = "INVALID_PARAMETER";
 
 export function configureErrorHandler(error: FastifyError | CustomException, request: FastifyRequest, reply: FastifyReply) {
   if (request.url.startsWith('/graphql')) {
@@ -13,15 +16,15 @@ export function configureErrorHandler(error: FastifyError | CustomException, req
 
     const response: ErrorResponse = {
       message: error.message ?? 'Erro interno do servidor',
-      code: error.code ? error.code : 'UNEXPECTED_ERROR',
+      code: error.code ?? 'UNEXPECTED_ERROR',
       details: error.details
     };
 
     reply.status(statusCode).send(response);
   } else {
     const response: ErrorResponse = {
-      message: "Erro no envio da mensagem devido ao mau formato da requisição",
-      code: "INVALID_PARAMETER",
+      message: DEFAULT_MESSAGE,
+      code: DEFAULT_CODE,
       details: error.validation?.map(validation => validation.message).filter(validation => validation !== undefined)
     };
 
@@ -29,27 +32,25 @@ export function configureErrorHandler(error: FastifyError | CustomException, req
   }
 }
 
-export function configureGraphqlErrorHandler(error: FastifyError | CustomError) {
-  console.log(error)
-  if (error && typeof error === 'object' && 'validation' in error) {
+export function configureGraphqlErrorHandler(error: FastifyError | CustomException) {
+  if (error instanceof CustomException) {
     return new GraphQLError(
-      "Erro no envio da mensagem devido ao mau formato da requisição",
+      error.message ?? 'Erro interno do servidor',
       {
         extensions: {
-          code: "INVALID_PARAMETER",
-          details: error.validation?.at(0)?.message
+          code: error.code ?? 'UNEXPECTED_ERROR',
+          details: error.details
         }
       }
     );
   }
   else {
-    const customError = error as CustomError;
     return new GraphQLError(
-      customError.message || 'Erro interno do servidor',
+      DEFAULT_MESSAGE,
       {
         extensions: {
-          code: customError.code || 'UNEXPECTED_ERROR',
-          details: 'details' in customError ? customError.details : undefined
+          code: DEFAULT_CODE,
+          details: error.validation?.map(validation => validation.message).filter(validation => validation !== undefined)
         }
       }
     );

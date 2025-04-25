@@ -85,7 +85,7 @@ describe("GET /users/:id", () => {
       },
       validateStatus: () => true
     });
-    expect(response.status).to.be.equal(403);
+    expect(response.status).to.be.equal(401);
     expect(response.data).to.be.deep.equal({
       code: "INVALID_AUTHENTICATION",
       message: "O Token não é válido ou está expirado",
