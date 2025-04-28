@@ -1,4 +1,5 @@
-import { AuthenticationMiddleware } from "./authenticate-middleware"
+import { AuthenticationMiddleware } from "../authenticate-middleware"
+
 
 export const getUserByIdOptions = {
   schema: {
